@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta de Alunos Selecionados</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    .search-highlight { background: linear-gradient(120deg, #bbf7d0 0%, #bbf7d0 100%); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  
+ </head>
+ <body class="h-full bg-gradient-to-br from-green-50 to-white">
+  <div id="app" class="h-full overflow-auto">
+   <!-- Header -->
+   <header class="bg-gradient-to-r from-green-700 to-green-600 text-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 py-6">
+     <div class="flex items-center gap-4">
+      <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md">
+       <svg class="w-10 h-10 text-green-700" fill="currentColor" viewbox="0 0 24 24">
+        <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
+       </svg>
+      </div>
+      <div>
+       <h1 id="school-title" class="text-2xl md:text-3xl font-bold">Escola Estadual Dr. João Leite de Barros</h1>
+       <p id="course-title" class="text-green-100 text-lg">Curso Normal Médio - Alunos Selecionados 2026</p>
+      </div>
+     </div>
+    </div>
+   </header><!-- Navigation Tabs -->
+   <nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4">
+     <div class="flex gap-1">
+      <button onclick="showTab('consulta')" id="tab-consulta" class="tab-btn px-6 py-4 font-semibold text-green-700 border-b-4 border-green-600 bg-green-50 transition-all"> 🔍 Consultar Resultado </button> <button onclick="showTab('lista')" id="tab-lista" class="tab-btn px-6 py-4 font-semibold text-gray-500 border-b-4 border-transparent hover:text-green-600 hover:bg-green-50 transition-all"> 📋 Lista Completa </button> <button onclick="showTab('documentos')" id="tab-documentos" class="tab-btn px-6 py-4 font-semibold text-gray-500 border-b-4 border-transparent hover:text-green-600 hover:bg-green-50 transition-all"> 📄 Documentos para Matrícula </button>
+     </div>
+    </div>
+   </nav><!-- Main Content -->
+   <main class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Tab: Consulta -->
+    <section id="section-consulta" class="tab-content">
+     <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Consulte seu Resultado</h2>
+      <p class="text-gray-500 mb-6">Digite seu nome ou número de inscrição para verificar se foi selecionado(a)</p>
+      <div class="flex flex-col md:flex-row gap-4">
+       <div class="flex-1 relative">
+        <input type="text" id="search-input" placeholder="Digite seu nome ou número de inscrição..." class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none transition-all" onkeyup="handleSearch(event)"> <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+         </svg></span>
+       </div><button onclick="searchStudent()" class="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"> Consultar </button>
+      </div>
+     </div><!-- Search Result -->
+     <div id="search-result" class="hidden">
+      <!-- Result will be inserted here -->
+     </div>
+    </section><!-- Tab: Lista Completa -->
+    <section id="section-lista" class="tab-content hidden">
+     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-gradient-to-r from-green-700 to-green-600 px-6 py-4">
+       <h2 class="text-xl font-bold text-white">📋 Lista Completa de Selecionados</h2>
+       <p class="text-green-100 text-sm">Total: <span id="total-count">0</span> alunos selecionados</p>
+      </div>
+      <div class="p-4">
+       <div class="overflow-x-auto">
+        <table class="w-full">
+         <thead>
+          <tr class="bg-green-50">
+           <th class="px-4 py-3 text-center text-sm font-semibold text-green-800">Classificação</th>
+           <th class="px-4 py-3 text-left text-sm font-semibold text-green-800">Nome do Candidato</th>
+           <th class="px-4 py-3 text-center text-sm font-semibold text-green-800">Situação</th>
+          </tr>
+         </thead>
+         <tbody id="students-table">
+          <!-- Students will be inserted here -->
+         </tbody>
+        </table>
+       </div>
+      </div>
+     </div>
+    </section><!-- Tab: Documentos -->
+    <section id="section-documentos" class="tab-content hidden">
+     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-gradient-to-r from-green-700 to-green-600 px-6 py-5">
+       <h2 class="text-2xl font-bold text-white">📄 Documentos Necessários para Matrícula</h2>
+       <p class="text-green-100">Apresente os documentos abaixo no ato da matrícula</p>
+      </div>
+      <div class="p-6 md:p-8">
+       <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
+        <div class="flex items-start gap-3">
+         <span class="text-2xl">⚠️</span>
+         <div>
+          <h3 class="font-semibold text-yellow-800">Atenção!</h3>
+          <p class="text-yellow-700 text-sm">Todos os documentos devem ser apresentados em cópia, acompanhados dos originais para conferência.</p>
+         </div>
+        </div>
+       </div>
+       <div class="grid gap-4">
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">I</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">Certidão de Nascimento ou Casamento</h4>
+          <p class="text-gray-500 text-sm">Cópia legível do documento</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">II</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">CPF - Cadastro de Pessoa Física</h4>
+          <p class="text-gray-500 text-sm">Cópia do documento</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">III</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">RG - Registro Geral</h4>
+          <p class="text-gray-500 text-sm">Cópia obrigatória para maiores de 18 anos</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">IV</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">Certificado de Conclusão do Ensino Médio</h4>
+          <p class="text-gray-500 text-sm">Documento original + Histórico Escolar original</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">V</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">Carteira de Vacinação</h4>
+          <p class="text-gray-500 text-sm">Cópia em conformidade com a legislação vigente</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">VI</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">Comprovante de Residência</h4>
+          <p class="text-gray-500 text-sm">Cópia ou declaração de residência, se for o caso</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">VII</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">Cartão do SUS</h4>
+          <p class="text-gray-500 text-sm">Cópia do cartão, se houver</p>
+         </div>
+        </div>
+        <div class="doc-item flex items-start gap-4 p-4 bg-amber-50 rounded-xl border-2 border-amber-300">
+         <span class="flex-shrink-0 w-10 h-10 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold">VIII</span>
+         <div>
+          <h4 class="font-semibold text-gray-800">Declaração de Vacinação Atualizada (DVA)</h4>
+          <p class="text-gray-600 text-sm"><strong class="text-amber-700">Importante:</strong> Este documento deve ser requerido no Posto de Saúde mais próximo, apresentando o cartão de vacinação.</p>
+         </div>
+        </div>
+       </div>
+       <div class="mt-8 grid gap-6">
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-5 rounded-r-lg">
+         <h3 class="font-bold text-blue-900 mb-3">📋 PRÉ-MATRÍCULA - CURSO NORMAL MÉDIO (2026)</h3>
+         <div class="space-y-2 text-blue-800 text-sm">
+          <p><strong>📅 Período de pré-matrícula:</strong> 02 de fevereiro a 18 de fevereiro de 2026</p>
+          <p><strong>⏳ Duração do curso:</strong> 12 meses</p>
+          <p><strong>🌐 Inscrições:</strong> Exclusivamente pelo site <a href="https://www.matriculadigital.ms.gov.br/MatriculaDigital/Home" target="_blank" rel="noopener noreferrer" class="underline font-semibold hover:text-blue-900">https://www.matriculadigital.ms.gov.br/MatriculaDigital/Home</a></p>
+          <p><strong>📚 Início das aulas previsto:</strong> 13 de março de 2026</p>
+         </div>
+        </div>
+        <div class="bg-green-100 rounded-xl p-5">
+         <h3 class="font-bold text-green-800 mb-2">📍 Local de Matrícula</h3>
+         <p class="text-green-700"><strong>Escola Estadual Dr. João Leite de Barros</strong><br>
+           Compareça à secretaria da escola com todos os documentos listados acima.</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main><!-- Footer -->
+   <footer class="bg-green-800 text-white py-6 mt-auto">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+     <p class="font-semibold">Escola Estadual Dr. João Leite de Barros</p>
+     <p class="text-green-200 text-sm mt-1">Curso Normal Médio - Processo Seletivo 2026</p>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // Lista de alunos selecionados baseada na planilha - 443 candidatos
+    const students = [
+      { classificacao: "1º", nome: "FATIMA DA APARECIDA VIEIRA DE BRITO", cpf: "163.572.***-97", sgde: "1476767", situacao: "CLASSIFICADO" },
+      { classificacao: "2º", nome: "CECILIA DO NASCIMENTO AGUILERA", cpf: "767.047.***-00", sgde: "1288246", situacao: "CLASSIFICADO" },
+      { classificacao: "3º", nome: "MARIA INES REIS DE MACEDO", cpf: "343.870.***-53", sgde: "1476225", situacao: "CLASSIFICADO" },
+      { classificacao: "4º", nome: "MARIA MADALENA DA SILVA NABOR", cpf: "378.978.***-04", sgde: "1476774", situacao: "CLASSIFICADO" },
+      { classificacao: "5º", nome: "ANA LUCIA DE CASTRO HURTADO MEIRA", cpf: "580.194.***-87", sgde: "1477181", situacao: "CLASSIFICADO" },
+      { classificacao: "6º", nome: "EUGENAURA DA SILVA SIMIÃO NEIVA", cpf: "378.978.***-87", sgde: "1476358", situacao: "CLASSIFICADO" },
+      { classificacao: "7º", nome: "JANETE ESQUER DE SOUSA", cpf: "558.444.***-04", sgde: "1392893", situacao: "CLASSIFICADO" },
+      { classificacao: "8º", nome: "NILVA NUNES MESSIAS", cpf: "558.433.***-34", sgde: "993961", situacao: "CLASSIFICADO" },
+      { classificacao: "9º", nome: "HILRINETE PINTO DE ARRUDA", cpf: "689.609.***-72", sgde: "1476029", situacao: "CLASSIFICADO" },
+      { classificacao: "10º", nome: "LUCIANNE SOUZA DO NASCIMENTO GUIMARAES", cpf: "580.080.***-49", sgde: "1476418", situacao: "CLASSIFICADO" },
+      { classificacao: "11º", nome: "ROSA EUGÊNIA ALVES DA COSTA QUEIROZ", cpf: "689.275.***-10", sgde: "1438263", situacao: "CLASSIFICADO" },
+      { classificacao: "12º", nome: "ROSINETE SILVA DOS SANTOS PEDROSO", cpf: "558.346.***-00", sgde: "1479562", situacao: "CLASSIFICADO" },
+      { classificacao: "13º", nome: "JOELMA MATOS DA SILVA PARABA", cpf: "497.020.***-04", sgde: "1392667", situacao: "CLASSIFICADO" },
+      { classificacao: "14º", nome: "LAURA PATRICIO PEREIRA", cpf: "506.713.***-87", sgde: "694659", situacao: "CLASSIFICADO" },
+      { classificacao: "15º", nome: "MARIA APARECIDA DO NASCIMENTO DE OLIVEIRA", cpf: "580.083.***-72", sgde: "803364", situacao: "CLASSIFICADO" },
+      { classificacao: "16º", nome: "MICHELE SOUZA SOARES", cpf: "053.743.***-47", sgde: "279518", situacao: "CLASSIFICADO" },
+      { classificacao: "17º", nome: "RAQUEL SANTOS DA CRUZ", cpf: "506.939.***-34", sgde: "967168", situacao: "CLASSIFICADO" },
+      { classificacao: "18º", nome: "REGINA SOARES DO CARMO", cpf: "558.442.***-20", sgde: "1476916", situacao: "CLASSIFICADO" },
+      { classificacao: "19º", nome: "ROSA LUIZA DE BARROS BALEJO", cpf: "497.099.***-53", sgde: "529640", situacao: "CLASSIFICADO" },
+      { classificacao: "20º", nome: "SILVANA DE OLIVEIRA CARVALHO", cpf: "558.481.***-00", sgde: "563106", situacao: "CLASSIFICADO" },
+      { classificacao: "21º", nome: "VALDENICE FERREIRA GOMES PAZ", cpf: "525.651.***-15", sgde: "811927", situacao: "CLASSIFICADO" },
+      { classificacao: "22º", nome: "ARIELEN  COSTA  NUNES  TINOCO", cpf: "048.939.***-10", sgde: "776822", situacao: "CLASSIFICADO" },
+      { classificacao: "23º", nome: "CARMEN APARECIDA AMARILHO", cpf: "497.345.***-20", sgde: "1295805", situacao: "CLASSIFICADO" },
+      { classificacao: "24º", nome: "EDA REGINA DE ALBUQUERQUE MARTINEZ", cpf: "506.901.***-34", sgde: "747251", situacao: "CLASSIFICADO" },
+      { classificacao: "25º", nome: "LUCIANA LAURA ROJAS", cpf: "497.109.***-68", sgde: "1479453", situacao: "CLASSIFICADO" },
+      { classificacao: "26º", nome: "JULIANA CAROLINE SIMIÃO NEIVA", cpf: "044.593.***-07", sgde: "1341741", situacao: "CLASSIFICADO" },
+      { classificacao: "27º", nome: "MARCIA REGINA GARCIA", cpf: "796.287.***-04", sgde: "1479484", situacao: "CLASSIFICADO" },
+      { classificacao: "28º", nome: "ROSANE FARIAS MENDOZA", cpf: "497.122.***-34", sgde: "1476397", situacao: "CLASSIFICADO" },
+      { classificacao: "29º", nome: "SUELLEN DIVINA NUNES DE JESUS", cpf: "050.028.***-89", sgde: "1476152", situacao: "CLASSIFICADO" },
+      { classificacao: "30º", nome: "FERNANDA GIORDANO BARBOSA", cpf: "800.740.***-00", sgde: "1392264", situacao: "CLASSIFICADO" },
+      { classificacao: "31º", nome: "PATRICIA CARMO PEREIRA", cpf: "014.681.***-30", sgde: "96433", situacao: "CLASSIFICADO" },
+      { classificacao: "32º", nome: "ROSALINA GOMES TAPANACTE", cpf: "696.402.***-34", sgde: "1332133", situacao: "CLASSIFICADO" },
+      { classificacao: "33º", nome: "SANDRA MONTEIRO OSSINAGA", cpf: "954.499.***-53", sgde: "309855", situacao: "CLASSIFICADO" },
+      { classificacao: "34º", nome: "EDIRLEY MARIA DE ANDRADE", cpf: "408.591.***-97", sgde: "1476271", situacao: "CLASSIFICADO" },
+      { classificacao: "35º", nome: "ERIKA DA COSTA MONTEIRO SELASCO", cpf: "056.928.***-58", sgde: "265240", situacao: "CLASSIFICADO" },
+      { classificacao: "36º", nome: "GELISE DA CRUZ FONSECA", cpf: "070.281.***-26", sgde: "836773", situacao: "CLASSIFICADO" },
+      { classificacao: "37º", nome: "JOSELITA SANABRIA ALVAREZ MENDES", cpf: "409.118.***-30", sgde: "1476546", situacao: "CLASSIFICADO" },
+      { classificacao: "38º", nome: "NEIDE CINTRA DE MELO DE PAULA", cpf: "836.096.***-15", sgde: "1477292", situacao: "CLASSIFICADO" },
+      { classificacao: "39º", nome: "NELY FERNANDES SEVERINO", cpf: "409.062.***-15", sgde: "1477168", situacao: "CLASSIFICADO" },
+      { classificacao: "40º", nome: "ROSEMARE NUNES PIRES", cpf: "824.187.***-87", sgde: "1476346", situacao: "CLASSIFICADO" },
+      { classificacao: "41º", nome: "CLEUCIANE DE CAMPOS CARDOSO", cpf: "892.446.***-20", sgde: "541737", situacao: "CLASSIFICADO" },
+      { classificacao: "42º", nome: "DIANNA CRISTINA BARBOSA", cpf: "007.134.***-00", sgde: "315918", situacao: "CLASSIFICADO" },
+      { classificacao: "43º", nome: "GISELE ROJAS BRAGA PINHO", cpf: "698.368.***-20", sgde: "696699", situacao: "CLASSIFICADO" },
+      { classificacao: "44º", nome: "MAGNA VITAL CORTEZ PEREIRA", cpf: "700.824.***-68", sgde: "109628", situacao: "CLASSIFICADO" },
+      { classificacao: "45º", nome: "MARIA MENDES SOARES", cpf: "497.010.***-34", sgde: "1392898", situacao: "CLASSIFICADO" },
+      { classificacao: "46º", nome: "RONILSO DE OLIVEIRA TEIXEIRA", cpf: "688.723.***-72", sgde: "286371", situacao: "CLASSIFICADO" },
+      { classificacao: "47º", nome: "ROSANA REIS", cpf: "910.661.***-00", sgde: "705787", situacao: "CLASSIFICADO" },
+      { classificacao: "48º", nome: "TATIANA CONCEIÇÃO DE OLIVEIRA", cpf: "688.419.***-15", sgde: "1476366", situacao: "CLASSIFICADO" },
+      { classificacao: "49º", nome: "TELMA SUAREZ ARTEAGA", cpf: "497.327.***-91", sgde: "1476783", situacao: "CLASSIFICADO" },
+      { classificacao: "50º", nome: "CARLINDA MATTOS DA SILVA", cpf: "024.181.***-07", sgde: "56640", situacao: "CLASSIFICADO" },
+      { classificacao: "51º", nome: "CRISTIANE CECILIA MARTINEZ", cpf: "005.138.***-88", sgde: "1321186", situacao: "CLASSIFICADO" },
+      { classificacao: "52º", nome: "ELIZANGELA RIBAS DE BARROS SOARES", cpf: "002.810.***-18", sgde: "1476115", situacao: "CLASSIFICADO" },
+      { classificacao: "53º", nome: "IZALTINO LOBATO DA SILVA", cpf: "217.233.***-78", sgde: "1479459", situacao: "CLASSIFICADO" },
+      { classificacao: "54º", nome: "JASMINA ORTIZ TÁSSEO", cpf: "008.415.***-83", sgde: "457548", situacao: "CLASSIFICADO" },
+      { classificacao: "55º", nome: "LUCILENE DA SILVA SAMPAIO", cpf: "864.230.***-34", sgde: "303106", situacao: "CLASSIFICADO" },
+      { classificacao: "56º", nome: "SANDRA CANDELÁRIA VELASQUES FERREIRA DE BARROS", cpf: "497.318.***-04", sgde: "1476536", situacao: "CLASSIFICADO" },
+      { classificacao: "57º", nome: "TATIANE VELASCO ZORIO", cpf: "009.480.***-62", sgde: "1479528", situacao: "CLASSIFICADO" },
+      { classificacao: "58º", nome: "VANILCE SOARES DE PAULA", cpf: "035.073.***-67", sgde: "1478587", situacao: "CLASSIFICADO" },
+      { classificacao: "59º", nome: "ELIAS DE OLIVEIRA SANTOS", cpf: "012.391.***-98", sgde: "1476556", situacao: "CLASSIFICADO" },
+      { classificacao: "60º", nome: "ELIZANE ROBERTA OLIVEIRA SILVA", cpf: "000.440.***-27", sgde: "446644", situacao: "CLASSIFICADO" },
+      { classificacao: "61º", nome: "FLORINDA SABINA FERREIRA DOS SANTOS", cpf: "017.711.***-89", sgde: "243626", situacao: "CLASSIFICADO" },
+      { classificacao: "62º", nome: "LAURA GIZELE RONDON DE OLIVEIRA MELO", cpf: "003.199.***-82", sgde: "1476335", situacao: "CLASSIFICADO" },
+      { classificacao: "63º", nome: "MARIA BETÂNIA BANCER DURAN", cpf: "012.676.***-12", sgde: "1476698", situacao: "CLASSIFICADO" },
+      { classificacao: "64º", nome: "MARIA SILVANA SERATAIA GONÇALVES", cpf: "014.444.***-39", sgde: "205453", situacao: "CLASSIFICADO" },
+      { classificacao: "65º", nome: "MIRELA MEDEIROS DE BARROS", cpf: "002.143.***-39", sgde: "1083089", situacao: "CLASSIFICADO" },
+      { classificacao: "66º", nome: "ROSANA CATARINA PINTO DA SILVA", cpf: "019.683.***-44", sgde: "447059", situacao: "CLASSIFICADO" },
+      { classificacao: "67º", nome: "STEPHANI GENI GARCIA DE MORAIS", cpf: "045.266.***-56", sgde: "305089", situacao: "CLASSIFICADO" },
+      { classificacao: "68º", nome: "SUELLEN ELEUTERIO BENITES", cpf: "013.154.***-16", sgde: "1339969", situacao: "CLASSIFICADO" },
+      { classificacao: "69º", nome: "TAINARA YANKA DE ALMEIDA FERREIRA CAMPOS", cpf: "064.231.***-10", sgde: "240161", situacao: "CLASSIFICADO" },
+      { classificacao: "70º", nome: "CANDIDA DA CONCEIÇÃO", cpf: "007.986.***-93", sgde: "1476773", situacao: "CLASSIFICADO" },
+      { classificacao: "71º", nome: "DÉBORA BARBOSA DA SILVA", cpf: "100.483.***-09", sgde: "1339665", situacao: "CLASSIFICADO" },
+      { classificacao: "72º", nome: "ELAINE ORTIZ", cpf: "012.018.***-21", sgde: "1479377", situacao: "CLASSIFICADO" },
+      { classificacao: "73º", nome: "ELIZABETH DO CARMO", cpf: "009.258.***-76", sgde: "285927", situacao: "CLASSIFICADO" },
+      { classificacao: "74º", nome: "QUETILYN VÂNIA MIDON", cpf: "940.358.***-97", sgde: "524295", situacao: "CLASSIFICADO" },
+      { classificacao: "75º", nome: "ROSALIA DE ARAUJO DUARTE", cpf: "495.184.***-49", sgde: "72648", situacao: "CLASSIFICADO" },
+      { classificacao: "76º", nome: "ROSELAINE VELASQUEZ DO ROSÁRIO", cpf: "941.321.***-53", sgde: "1476104", situacao: "CLASSIFICADO" },
+      { classificacao: "77º", nome: "ANDERSON NEANDER DUARTE DE ANDRADE", cpf: "729.013.***-87", sgde: "1477795", situacao: "CLASSIFICADO" },
+      { classificacao: "78º", nome: "CLAUDINEIA DE LIMA VIEIRA", cpf: "006.724.***-71", sgde: "33847", situacao: "CLASSIFICADO" },
+      { classificacao: "79º", nome: "CRISTIANE REGINA FIRMINO", cpf: "506.601.***-34", sgde: "1476687", situacao: "CLASSIFICADO" },
+      { classificacao: "80º", nome: "ELIZANDRA DE MEDEIROS PINHO", cpf: "988.197.***-91", sgde: "872803", situacao: "CLASSIFICADO" },
+      { classificacao: "81º", nome: "FLÁVIA VICTÓRIO COELHO DA SILVA", cpf: "002.758.***-00", sgde: "837311", situacao: "CLASSIFICADO" },
+      { classificacao: "82º", nome: "GEANY MARA SILVA ALMEIDA", cpf: "022.682.***-40", sgde: "321563", situacao: "CLASSIFICADO" },
+      { classificacao: "83º", nome: "JOCIANE DA SILVA BARBOSA COSTA", cpf: "038.658.***-22", sgde: "461589", situacao: "CLASSIFICADO" },
+      { classificacao: "84º", nome: "MARCIO BAREIRO PAREDE FILHO", cpf: "026.249.***-78", sgde: "1037505", situacao: "CLASSIFICADO" },
+      { classificacao: "85º", nome: "MARTA BARBOSA RAMOS", cpf: "007.794.***-89", sgde: "1260340", situacao: "CLASSIFICADO" },
+      { classificacao: "86º", nome: "SILVANA ORTIZ SOARES", cpf: "016.784.***-64", sgde: "1392143", situacao: "CLASSIFICADO" },
+      { classificacao: "87º", nome: "SIRLEY VIEIRA", cpf: "029.445.***-00", sgde: "1237395", situacao: "CLASSIFICADO" },
+      { classificacao: "88º", nome: "TAIS COLOMBO DE OLIVEIRA", cpf: "087.301.***-77", sgde: "1106813", situacao: "CLASSIFICADO" },
+      { classificacao: "89º", nome: "VERIMARCIA MOLINA DE SOUZA", cpf: "000.333.***-39", sgde: "1432458", situacao: "CLASSIFICADO" },
+      { classificacao: "90º", nome: "WAGNER SORRILHA SAMANIEGO", cpf: "017.470.***-52", sgde: "123411", situacao: "CLASSIFICADO" },
+      { classificacao: "91º", nome: "ANA PAULA DOS SANTOS OLIVEIRA", cpf: "006.222.***-32", sgde: "995114", situacao: "CLASSIFICADO" },
+      { classificacao: "92º", nome: "ANNE VANESSA XIMENES", cpf: "034.206.***-03", sgde: "272832", situacao: "CLASSIFICADO" },
+      { classificacao: "93º", nome: "BRUNO MATHEUS DA SILVA RODRIGUES", cpf: "059.612.***-17", sgde: "521064", situacao: "CLASSIFICADO" },
+      { classificacao: "94º", nome: "EDNA LEMOS DE CARVALHO E SILVA", cpf: "558.441.***-72", sgde: "1479376", situacao: "CLASSIFICADO" },
+      { classificacao: "95º", nome: "ELIANE FONSECA RAMOS DE PAULA", cpf: "558.372.***-68", sgde: "1476519", situacao: "CLASSIFICADO" },
+      { classificacao: "96º", nome: "MARIA LEMOS BARBOSA", cpf: "065.870.***-20", sgde: "1040069", situacao: "CLASSIFICADO" },
+      { classificacao: "97º", nome: "PRICILA APARECIDA PEREIRA DE ARRUDA", cpf: "013.109.***-69", sgde: "1476374", situacao: "CLASSIFICADO" },
+      { classificacao: "98º", nome: "SUELEN RODRIGUES DE SENA", cpf: "009.581.***-23", sgde: "1476542", situacao: "CLASSIFICADO" },
+      { classificacao: "99º", nome: "VERONICA VILALVA DE SOUZA", cpf: "007.602.***-93", sgde: "530521", situacao: "CLASSIFICADO" },
+      { classificacao: "100º", nome: "AGATHA CRISTIE MIRANDA GONÇALVES", cpf: "046.459.***-52", sgde: "1209173", situacao: "CLASSIFICADO" },
+      { classificacao: "101º", nome: "ALZIRA SILVA LIMA DOS SANTOS", cpf: "580.016.***-20", sgde: "1476626", situacao: "CLASSIFICADO" },
+      { classificacao: "102º", nome: "CRISTIANE DOS SANTOS", cpf: "024.653.***-00", sgde: "238658", situacao: "CLASSIFICADO" },
+      { classificacao: "103º", nome: "DORIS NOGUEIRA GONÇALVES", cpf: "029.103.***-29", sgde: "442948", situacao: "CLASSIFICADO" },
+      { classificacao: "104º", nome: "ESCHELLEY VITORIA CRUZ PINHEIRO SANTOS", cpf: "069.141.***-11", sgde: "1102182", situacao: "CLASSIFICADO" },
+      { classificacao: "105º", nome: "EVERALDO BARBA CASTEDO", cpf: "558.410.***-04", sgde: "1476782", situacao: "CLASSIFICADO" },
+      { classificacao: "106º", nome: "FERNANDA NEPOMUCENO TORRES DO ESPIRITO SANTO", cpf: "006.152.***-93", sgde: "872836", situacao: "CLASSIFICADO" },
+      { classificacao: "107º", nome: "GEIZIANE APARECIDA VELASQUES DE MORAES", cpf: "033.011.***-26", sgde: "1043634", situacao: "CLASSIFICADO" },
+      { classificacao: "108º", nome: "GIOVANA REGIANE RODRIGUES SOUZA", cpf: "916.487.***-44", sgde: "1476754", situacao: "CLASSIFICADO" },
+      { classificacao: "109º", nome: "GLEISSY FONSECA DOS SANTOS", cpf: "781.188.***-72", sgde: "1476148", situacao: "CLASSIFICADO" },
+      { classificacao: "110º", nome: "GRACIELA DE OLIVEIRA VITORIO NAVARROS", cpf: "012.811.***-79", sgde: "1392033", situacao: "CLASSIFICADO" },
+      { classificacao: "111º", nome: "JENICE KILL DO ESPIRITO SANTO", cpf: "018.187.***-54", sgde: "1476323", situacao: "CLASSIFICADO" },
+      { classificacao: "112º", nome: "JENIFFER KILL DO ESPÍRITO SANTO", cpf: "012.714.***-00", sgde: "1476316", situacao: "CLASSIFICADO" },
+      { classificacao: "113º", nome: "NÁDIA ADRIANA SILVA DE PAULA", cpf: "034.454.***-56", sgde: "1476612", situacao: "CLASSIFICADO" },
+      { classificacao: "114º", nome: "RENE GOMES DA SILVA", cpf: "994.315.***-20", sgde: "686042", situacao: "CLASSIFICADO" },
+      { classificacao: "115º", nome: "ROSIVANIA SOUZA DO CARMO", cpf: "012.678.***-43", sgde: "1392397", situacao: "CLASSIFICADO" },
+      { classificacao: "116º", nome: "THAÍS DA COSTA MOURA", cpf: "064.712.***-38", sgde: "263123", situacao: "CLASSIFICADO" },
+      { classificacao: "117º", nome: "ANNE CAROLINE DE SOUZA XIMENES", cpf: "019.924.***-51", sgde: "1259917", situacao: "CLASSIFICADO" },
+      { classificacao: "118º", nome: "ELAINE CRISTINA ARAUJO DE ALMEIDA", cpf: "496.991.***-53", sgde: "1476108", situacao: "CLASSIFICADO" },
+      { classificacao: "119º", nome: "ELAINE RODRIGUES DA SILVA", cpf: "029.185.***-20", sgde: "314924", situacao: "CLASSIFICADO" },
+      { classificacao: "120º", nome: "GRACIELA DOS SANTOS", cpf: "024.731.***-16", sgde: "1475968", situacao: "CLASSIFICADO" },
+      { classificacao: "121º", nome: "KELLY DA SILVA CONCEÇÃO", cpf: "025.633.***-95", sgde: "1476743", situacao: "CLASSIFICADO" },
+      { classificacao: "122º", nome: "LÉLIA TABORDA VILLA", cpf: "039.474.***-13", sgde: "308937", situacao: "CLASSIFICADO" },
+      { classificacao: "123º", nome: "LUCIANA MENDES CASTELLO", cpf: "002.602.***-62", sgde: "237582", situacao: "CLASSIFICADO" },
+      { classificacao: "124º", nome: "MARIA EMILIA DA SILVA ARRUDA", cpf: "050.978.***-61", sgde: "301388", situacao: "CLASSIFICADO" },
+      { classificacao: "125º", nome: "NEISE CARVALHO DA SILVA", cpf: "031.820.***-62", sgde: "1055537", situacao: "CLASSIFICADO" },
+      { classificacao: "126º", nome: "ROSALINA BARBOSA RAMOS", cpf: "005.058.***-46", sgde: "1477825", situacao: "CLASSIFICADO" },
+      { classificacao: "127º", nome: "SILVANA MOSCIARO DE PINHO", cpf: "005.760.***-86", sgde: "1476552", situacao: "CLASSIFICADO" },
+      { classificacao: "128º", nome: "TANIA CRISTINA SILVA SANTOS", cpf: "950.446.***-53", sgde: "1479430", situacao: "CLASSIFICADO" },
+      { classificacao: "129º", nome: "TAINAN GIMENES DE SOUZA", cpf: "709.209.***-28", sgde: "1242842", situacao: "CLASSIFICADO" },
+      { classificacao: "130º", nome: "ANA PAULA CAMPOS DE ALMEIDA", cpf: "025.319.***-63", sgde: "1479849", situacao: "CLASSIFICADO" },
+      { classificacao: "131º", nome: "CARINA SANTOS AYALA", cpf: "497.435.***-20", sgde: "1479747", situacao: "CLASSIFICADO" },
+      { classificacao: "132º", nome: "EDILENE GARCIA", cpf: "040.331.***-05", sgde: "304753", situacao: "CLASSIFICADO" },
+      { classificacao: "133º", nome: "EDINEIA DE SOUZA", cpf: "982.260.***-63", sgde: "1476124", situacao: "CLASSIFICADO" },
+      { classificacao: "134º", nome: "ELIANE DA CONCEIÇÃO FLORES", cpf: "024.325.***-32", sgde: "305024", situacao: "CLASSIFICADO" },
+      { classificacao: "135º", nome: "ELIONAY BRANDÃO DOS SANTOS", cpf: "021.845.***-16", sgde: "994748", situacao: "CLASSIFICADO" },
+      { classificacao: "136º", nome: "GILCELENE LAURA GONÇALVES", cpf: "012.547.***-00", sgde: "1392393", situacao: "CLASSIFICADO" },
+      { classificacao: "137º", nome: "GLORIA GODOY RODRIGUES", cpf: "019.518.***-00", sgde: "1479273", situacao: "CLASSIFICADO" },
+      { classificacao: "138º", nome: "KARINE DE ARRUDA MONTENEGRO", cpf: "020.867.***-10", sgde: "1437298", situacao: "CLASSIFICADO" },
+      { classificacao: "139º", nome: "LIANE APARECIDA ANTUNES DE SOUZA", cpf: "021.294.***-17", sgde: "1393038", situacao: "CLASSIFICADO" },
+      { classificacao: "140º", nome: "MICHELLI TAIS MOREIRA DA SILVA", cpf: "024.890.***-30", sgde: "1392129", situacao: "CLASSIFICADO" },
+      { classificacao: "141º", nome: "AMAURILHA DE SOUZA CRUZ", cpf: "089.652.***-70", sgde: "1083275", situacao: "CLASSIFICADO" },
+      { classificacao: "142º", nome: "DELLUZI PEREIRA BRANDÃO", cpf: "029.817.***-62", sgde: "1479291", situacao: "CLASSIFICADO" },
+      { classificacao: "143º", nome: "HELEN JANAINA DA SILVA", cpf: "040.943.***-01", sgde: "1476196", situacao: "CLASSIFICADO" },
+      { classificacao: "144º", nome: "LETÍCIA CONCEIÇÃO RICARDI", cpf: "022.358.***-37", sgde: "47135", situacao: "CLASSIFICADO" },
+      { classificacao: "145º", nome: "MARIENE FREITAS OHARA", cpf: "024.493.***-00", sgde: "302651", situacao: "CLASSIFICADO" },
+      { classificacao: "146º", nome: "ROSIANE RAMOS SALES DA SILVA", cpf: "025.811.***-83", sgde: "1392883", situacao: "CLASSIFICADO" },
+      { classificacao: "147º", nome: "SILMARA CRISTINA MELGAR FLORES DE OLIVEIRA", cpf: "024.544.***-67", sgde: "186292", situacao: "CLASSIFICADO" },
+      { classificacao: "148º", nome: "ELAINE CRISTINA FRANCO SOQUERE", cpf: "867.250.***-15", sgde: "1478123", situacao: "CLASSIFICADO" },
+      { classificacao: "149º", nome: "ELAINE REGINA GARCIA DA SILVA", cpf: "855.826.***-87", sgde: "1479418", situacao: "CLASSIFICADO" },
+      { classificacao: "150º", nome: "ELIZÂNGELA BARBOSA RAMOS", cpf: "034.235.***-76", sgde: "82543", situacao: "CLASSIFICADO" },
+      { classificacao: "151º", nome: "FERNANDA ORTIZ DA SILVA", cpf: "024.034.***-97", sgde: "109288", situacao: "CLASSIFICADO" },
+      { classificacao: "152º", nome: "FRANCIELLY DE ARRUDA PINTO", cpf: "040.097.***-90", sgde: "311713", situacao: "CLASSIFICADO" },
+      { classificacao: "153º", nome: "JULIANE MARTINS DA SILVA", cpf: "033.461.***-79", sgde: "20081", situacao: "CLASSIFICADO" },
+      { classificacao: "154º", nome: "MARILENE TEIXEIRA DE SOUZA", cpf: "931.294.***-20", sgde: "1477437", situacao: "CLASSIFICADO" },
+      { classificacao: "155º", nome: "ODNEY EDSON DE SOUZA TORRES", cpf: "021.092.***-37", sgde: "1476011", situacao: "CLASSIFICADO" },
+      { classificacao: "156º", nome: "PATRÍCIA COELHO GONCALVES", cpf: "026.507.***-50", sgde: "1476961", situacao: "CLASSIFICADO" },
+      { classificacao: "157º", nome: "ROSILEIA MOREIRA CEZAR", cpf: "960.102.***-87", sgde: "1479446", situacao: "CLASSIFICADO" },
+      { classificacao: "158º", nome: "SUELLEN MENDES GÓES DUARTE", cpf: "032.030.***-04", sgde: "1392370", situacao: "CLASSIFICADO" },
+      { classificacao: "159º", nome: "SUZANA AUXILIADORA DE SOUZA", cpf: "736.511.***-20", sgde: "820746", situacao: "CLASSIFICADO" },
+      { classificacao: "160º", nome: "WALERIA RAFAELA DOS SANTOS CRUZ", cpf: "031.528.***-77", sgde: "1260249", situacao: "CLASSIFICADO" },
+      { classificacao: "161º", nome: "ALINE GARCIA DA SILVA", cpf: "025.419.***-47", sgde: "129555", situacao: "CLASSIFICADO" },
+      { classificacao: "162º", nome: "AMANDA KEILA MODESTO DELFINO", cpf: "033.998.***-05", sgde: "516141", situacao: "CLASSIFICADO" },
+      { classificacao: "163º", nome: "BIANCA ROÇA SILES", cpf: "941.062.***-91", sgde: "1478656", situacao: "CLASSIFICADO" },
+      { classificacao: "164º", nome: "CLAUDIA ALICE PATRICIO PEREIRA", cpf: "525.686.***-15", sgde: "1479545", situacao: "CLASSIFICADO" },
+      { classificacao: "165º", nome: "CLAUDINÉIA DE ARAUJO SILVA", cpf: "027.313.***-10", sgde: "99227", situacao: "CLASSIFICADO" },
+      { classificacao: "166º", nome: "ELAINE DA SILVA VASCONCELLOS", cpf: "041.827.***-00", sgde: "306433", situacao: "CLASSIFICADO" },
+      { classificacao: "167º", nome: "ELIZANGELA MANOEL DE SOUZA", cpf: "901.993.***-91", sgde: "1476105", situacao: "CLASSIFICADO" },
+      { classificacao: "168º", nome: "GREYCIANE MARTINS FERREIRA", cpf: "013.951.***-50", sgde: "1479555", situacao: "CLASSIFICADO" },
+      { classificacao: "169º", nome: "JOSÉ ROBERTO DURAN NAVARROS", cpf: "029.271.***-75", sgde: "1392054", situacao: "CLASSIFICADO" },
+      { classificacao: "170º", nome: "JULY DA COSTA STRAL", cpf: "923.213.***-00", sgde: "1477116", situacao: "CLASSIFICADO" },
+      { classificacao: "171º", nome: "LORENA APARECIDA DA SILVA CAMPISTA", cpf: "011.627.***-04", sgde: "531061", situacao: "CLASSIFICADO" },
+      { classificacao: "172º", nome: "LUIZA VILALVA DAS NEVES ALEXANDRE", cpf: "033.906.***-33", sgde: "1392905", situacao: "CLASSIFICADO" },
+      { classificacao: "173º", nome: "MARIA AUXILIADORA SILES DE MORAES", cpf: "034.847.***-24", sgde: "184241", situacao: "CLASSIFICADO" },
+      { classificacao: "174º", nome: "PATRICIA CRISIAN CAMPOS DOS SANTOS", cpf: "034.890.***-10", sgde: "308398", situacao: "CLASSIFICADO" },
+      { classificacao: "175º", nome: "PRISCIANE PEREIRA TASSEO", cpf: "048.215.***-90", sgde: "1476002", situacao: "CLASSIFICADO" },
+      { classificacao: "176º", nome: "TAMYRES SOARES GONZALEZ", cpf: "039.500.***-10", sgde: "212449", situacao: "CLASSIFICADO" },
+      { classificacao: "177º", nome: "VERONYCA CAMYLLA MARTINS DO NASCIMENTO", cpf: "018.375.***-98", sgde: "272506", situacao: "CLASSIFICADO" },
+      { classificacao: "178º", nome: "AMANDA COSTA DE BARROS", cpf: "053.874.***-46", sgde: "1061302", situacao: "CLASSIFICADO" },
+      { classificacao: "179º", nome: "ANA PAULA DA SILVA CLARO", cpf: "039.585.***-18", sgde: "1479564", situacao: "CLASSIFICADO" },
+      { classificacao: "180º", nome: "CLAUDINETE VASQUEZ", cpf: "002.214.***-76", sgde: "1476004", situacao: "CLASSIFICADO" },
+      { classificacao: "181º", nome: "EVELEN DOS SANTOS CHAVES", cpf: "040.973.***-11", sgde: "1476482", situacao: "CLASSIFICADO" },
+      { classificacao: "182º", nome: "GIANNY MONTEIRO GOMES FRETES", cpf: "053.959.***-14", sgde: "1477859", situacao: "CLASSIFICADO" },
+      { classificacao: "183º", nome: "ISABELLA DOS SANTOS SILVA", cpf: "014.499.***-59", sgde: "347708", situacao: "CLASSIFICADO" },
+      { classificacao: "184º", nome: "JENNYFFER ORTIZ SOARES", cpf: "043.355.***-27", sgde: "64518", situacao: "CLASSIFICADO" },
+      { classificacao: "185º", nome: "JUCIMARA FLORES GONZALES", cpf: "038.321.***-40", sgde: "444153", situacao: "CLASSIFICADO" },
+      { classificacao: "186º", nome: "MARIANE MENDES DE OLIVEIRA", cpf: "047.921.***-13", sgde: "92167", situacao: "CLASSIFICADO" },
+      { classificacao: "187º", nome: "REINALDO FONSECA BARRETO", cpf: "039.246.***-80", sgde: "89522", situacao: "CLASSIFICADO" },
+      { classificacao: "188º", nome: "VICTOR JOÃO DE ARRUDA NETO", cpf: "042.492.***-21", sgde: "1476014", situacao: "CLASSIFICADO" },
+      { classificacao: "189º", nome: "ADRIELLE VALÉRIA DOS SANTOS JOEIS", cpf: "042.531.***-08", sgde: "243624", situacao: "CLASSIFICADO" },
+      { classificacao: "190º", nome: "ANA APARECIDA CORRÊA CANIDO IGLEZIAS", cpf: "013.039.***-41", sgde: "1475973", situacao: "CLASSIFICADO" },
+      { classificacao: "191º", nome: "BEATRIZ DAMASCENO PIRES", cpf: "038.606.***-99", sgde: "154422", situacao: "CLASSIFICADO" },
+      { classificacao: "192º", nome: "CAMILA SERATAYA BEZERRA", cpf: "038.544.***-86", sgde: "248931", situacao: "CLASSIFICADO" },
+      { classificacao: "193º", nome: "ELIZABETH MANOEL DE SOUZA RIBEIRO", cpf: "998.255.***-34", sgde: "1476120", situacao: "CLASSIFICADO" },
+      { classificacao: "194º", nome: "ELIZANDRA DOS SANTOS SOUZA", cpf: "025.773.***-07", sgde: "99014", situacao: "CLASSIFICADO" },
+      { classificacao: "195º", nome: "FLÁVIA MARQUES DE VASCONCELOS", cpf: "032.107.***-02", sgde: "26967", situacao: "CLASSIFICADO" },
+      { classificacao: "196º", nome: "FLÁVIA MORGANA NAZARÉ DA SILVA DE OLIVEIRA", cpf: "019.540.***-82", sgde: "1477747", situacao: "CLASSIFICADO" },
+      { classificacao: "197º", nome: "JESSICA BEZERRA DS SANTOS", cpf: "038.227.***-79", sgde: "689572", situacao: "CLASSIFICADO" },
+      { classificacao: "198º", nome: "JOCIMAR JUBERTO DE LIMA", cpf: "033.947.***-69", sgde: "46993", situacao: "CLASSIFICADO" },
+      { classificacao: "199º", nome: "JOSELAINE ORTIZ DOS SANTOS", cpf: "033.532.***-58", sgde: "8023", situacao: "CLASSIFICADO" },
+      { classificacao: "200º", nome: "MICHELLE ANDREIA SOARES ATAGIBA", cpf: "012.155.***-92", sgde: "1476764", situacao: "CLASSIFICADO" },
+      { classificacao: "201º", nome: "PATRÍCIA RIBEIRO BOBADILHA", cpf: "048.113.***-90", sgde: "290827", situacao: "CLASSIFICADO" },
+      { classificacao: "202º", nome: "ROSEANE INÊS DA SILVA NEPOMUCENO", cpf: "044.674.***-56", sgde: "282728", situacao: "CLASSIFICADO" },
+      { classificacao: "203º", nome: "ROSIANE PEREIRA FERNANDES", cpf: "013.764.***-28", sgde: "1477466", situacao: "CLASSIFICADO" },
+      { classificacao: "204º", nome: "SONJA DHAYSSA ORTIZ FERRAZ", cpf: "045.188.***-30", sgde: "122786", situacao: "CLASSIFICADO" },
+      { classificacao: "205º", nome: "VALDINEIA PIERRI DE SOUZA MEDEIROS", cpf: "954.604.***-20", sgde: "1477278", situacao: "CLASSIFICADO" },
+      { classificacao: "206º", nome: "ALLANA CAMPOS DE ARRUDA DINIZ", cpf: "050.317.***-48", sgde: "313189", situacao: "CLASSIFICADO" },
+      { classificacao: "207º", nome: "BIANCA FRANCA DE MEDEIROS", cpf: "019.342.***-22", sgde: "981464", situacao: "CLASSIFICADO" },
+      { classificacao: "208º", nome: "CARLA MAYARA DIAS DE SOUZA", cpf: "049.664.***-48", sgde: "1476549", situacao: "CLASSIFICADO" },
+      { classificacao: "209º", nome: "CAROLINE MOREIRA DA COSTA", cpf: "048.808.***-59", sgde: "8583", situacao: "CLASSIFICADO" },
+      { classificacao: "210º", nome: "CAROLINE STEPHANIE RODRIGUES", cpf: "049.708.***-02", sgde: "177716", situacao: "CLASSIFICADO" },
+      { classificacao: "211º", nome: "DOUGLAS FREITAS DOS SANTOS", cpf: "043.749.***-28", sgde: "48526", situacao: "CLASSIFICADO" },
+      { classificacao: "212º", nome: "ELAINE ACOSTA CORREIA", cpf: "003.415.***-71", sgde: "1476106", situacao: "CLASSIFICADO" },
+      { classificacao: "213º", nome: "FERNANDA APARECIDA CAMPOS GOMES", cpf: "039.113.***-00", sgde: "123456", situacao: "CLASSIFICADO" },
+      { classificacao: "214º", nome: "FRANCIELLY DA SILVA VIEIRA", cpf: "045.155.***-04", sgde: "290229", situacao: "CLASSIFICADO" },
+      { classificacao: "215º", nome: "GLAUCIA ORTEGA ABREU", cpf: "001.420.***-90", sgde: "1476384", situacao: "CLASSIFICADO" },
+      { classificacao: "216º", nome: "GREIZIELA DE LARA CAVASSA BARROZO", cpf: "002.321.***-44", sgde: "1476162", situacao: "CLASSIFICADO" },
+      { classificacao: "217º", nome: "JACIRA BENIGNO DE SALES", cpf: "000.488.***-93", sgde: "1479473", situacao: "CLASSIFICADO" },
+      { classificacao: "218º", nome: "JENNYFER FABIANA DE SOUZA BOBADILHA", cpf: "023.391.***-78", sgde: "446622", situacao: "CLASSIFICADO" },
+      { classificacao: "219º", nome: "JOANICE SANTANA DA SILVA", cpf: "029.494.***-23", sgde: "1478278", situacao: "CLASSIFICADO" },
+      { classificacao: "220º", nome: "JOÃO ANTONIO ALVES DA SILVA", cpf: "972.003.***-49", sgde: "1479565", situacao: "CLASSIFICADO" },
+      { classificacao: "221º", nome: "JORCIANE MALHEIROS MAGALHÃES", cpf: "053.381.***-83", sgde: "1477057", situacao: "CLASSIFICADO" },
+      { classificacao: "222º", nome: "KARINNY JANAYNA SAMPAIO DO NASCIMENTO", cpf: "055.072.***-14", sgde: "335187", situacao: "CLASSIFICADO" },
+      { classificacao: "223º", nome: "KARLA LEÃO HELLENSBERGER", cpf: "737.320.***-20", sgde: "273061", situacao: "CLASSIFICADO" },
+      { classificacao: "224º", nome: "LARISSA APARECIDA DE PINHO MELIN", cpf: "***.***.**-**", sgde: "59934", situacao: "CLASSIFICADO" },
+      { classificacao: "225º", nome: "MAIARA QUEIROZ DE OLIVEIRA", cpf: "048.433.***-51", sgde: "123512", situacao: "CLASSIFICADO" },
+      { classificacao: "226º", nome: "MIRIANE APARECIDA SAUCEDO DA SILVA", cpf: "050.112.***-45", sgde: "305722", situacao: "CLASSIFICADO" },
+      { classificacao: "227º", nome: "TATIANA RODRIGUES DA SILVA PEREIRA", cpf: "037.334.***-71", sgde: "278284", situacao: "CLASSIFICADO" },
+      { classificacao: "228º", nome: "VANESSA RODRIGUES DE QUEIROZ", cpf: "040.512.***-19", sgde: "299398", situacao: "CLASSIFICADO" },
+      { classificacao: "229º", nome: "VANESSA SALAZAR CONDE", cpf: "002.456.***-48", sgde: "1476061", situacao: "CLASSIFICADO" },
+      { classificacao: "230º", nome: "ANNY LUISA RIBEIRO DE SOUSA", cpf: "081.412.***-45", sgde: "661457", situacao: "CLASSIFICADO" },
+      { classificacao: "231º", nome: "ARYELLE JOEIS DE ARRUDA", cpf: "049.918.***-60", sgde: "132634", situacao: "CLASSIFICADO" },
+      { classificacao: "232º", nome: "CRISTIANE MILITÃO DE OLIVEIRA", cpf: "966.000.***-04", sgde: "1478906", situacao: "CLASSIFICADO" },
+      { classificacao: "233º", nome: "FERNANDA MENDONÇA DA SILVA", cpf: "053.958.***-29", sgde: "272938", situacao: "CLASSIFICADO" },
+      { classificacao: "234º", nome: "FRANCIANE SAMOSA CHUVE", cpf: "043.394.***-80", sgde: "1340866", situacao: "CLASSIFICADO" },
+      { classificacao: "235º", nome: "GABRIELLY DA SILVA DE CARVALHO", cpf: "050.837.***-24", sgde: "30144", situacao: "CLASSIFICADO" },
+      { classificacao: "236º", nome: "HELLEN PATRÍCIA VIEIRA DA SILVA", cpf: "056.592.***-40", sgde: "1476636", situacao: "CLASSIFICADO" },
+      { classificacao: "237º", nome: "KALISSA DAS NEVES GUADALUPE", cpf: "055.775.***-63", sgde: "82488", situacao: "CLASSIFICADO" },
+      { classificacao: "238º", nome: "LARISSA HELENA DE JESUS TIMÓTEO AMORIM", cpf: "003.439.***-96", sgde: "1476826", situacao: "CLASSIFICADO" },
+      { classificacao: "239º", nome: "LAURA CUSTÓDIO SOARES", cpf: "053.089.***-11", sgde: "308155", situacao: "CLASSIFICADO" },
+      { classificacao: "240º", nome: "MARILIA DE OLIVEIRA BARROS", cpf: "051.644.***-61", sgde: "261011", situacao: "CLASSIFICADO" },
+      { classificacao: "241º", nome: "THAYANE DALILA RAMOS DE CARVALHO", cpf: "045.935.***-13", sgde: "243493", situacao: "CLASSIFICADO" },
+      { classificacao: "242º", nome: "ALINE DA SILVA VASCONCELLOS", cpf: "055.217.***-42", sgde: "671642", situacao: "CLASSIFICADO" },
+      { classificacao: "243º", nome: "ALZILENE CAMPOS DA SILVA", cpf: "012.915.***-03", sgde: "1476291", situacao: "CLASSIFICADO" },
+      { classificacao: "244º", nome: "ARYELLE CRISTINA BOBADILHA CÁCERES", cpf: "021.238.***-10", sgde: "1476776", situacao: "CLASSIFICADO" },
+      { classificacao: "245º", nome: "CINTIA GARCIA DA COSTA SOARES", cpf: "012.643.***-43", sgde: "1479380", situacao: "CLASSIFICADO" },
+      { classificacao: "246º", nome: "GLORIA LEMOS SORRILHA", cpf: "067.592.***-09", sgde: "437963", situacao: "CLASSIFICADO" },
+      { classificacao: "247º", nome: "JACKELINE BATISTA PINTO DE SOUZA", cpf: "015.312.***-28", sgde: "1475957", situacao: "CLASSIFICADO" },
+      { classificacao: "248º", nome: "JORLAINE MALHEIROS MAGALHÃES", cpf: "018.979.***-30", sgde: "1477421", situacao: "CLASSIFICADO" },
+      { classificacao: "249º", nome: "JULLIANY DA COSTA ESPOSÁRIO", cpf: "053.866.***-01", sgde: "514838", situacao: "CLASSIFICADO" },
+      { classificacao: "250º", nome: "KELVIN ALEXANDER DA COSTA IBANEZ", cpf: "053.017.***-16", sgde: "176779", situacao: "CLASSIFICADO" },
+      { classificacao: "251º", nome: "KEROLLYNE ROJAS PEREIRA", cpf: "051.391.***-85", sgde: "293538", situacao: "CLASSIFICADO" },
+      { classificacao: "252º", nome: "LETÍCIA  FERREIRA GONÇALVES", cpf: "051.805.***-60", sgde: "299137", situacao: "CLASSIFICADO" },
+      { classificacao: "253º", nome: "LUCILENE PENHA DA CRUZ", cpf: "054.376.***-63", sgde: "341212", situacao: "CLASSIFICADO" },
+      { classificacao: "254º", nome: "LUDMILLA MARIA DE CARVALHO ALMEIDA", cpf: "053.831.***-66", sgde: "277692", situacao: "CLASSIFICADO" },
+      { classificacao: "255º", nome: "MARIA ANGÉLICA SILVA GONÇALVES", cpf: "049.796.***-63", sgde: "126235", situacao: "CLASSIFICADO" },
+      { classificacao: "256º", nome: "MARIA EDUARDA MENDOZA", cpf: "059.736.***-71", sgde: "673586", situacao: "CLASSIFICADO" },
+      { classificacao: "257º", nome: "MARY LADY PUCHO HUAMAN", cpf: "053.254.***-43", sgde: "333176", situacao: "CLASSIFICADO" },
+      { classificacao: "258º", nome: "MIGUEL BRANDAO MONGENOT GOMES", cpf: "040.794.***-74", sgde: "226526", situacao: "CLASSIFICADO" },
+      { classificacao: "259º", nome: "PATRÍCIA LOPES MIRANDA BRITO", cpf: "008.579.***-03", sgde: "1477842", situacao: "CLASSIFICADO" },
+      { classificacao: "260º", nome: "ADRIANE JURÊ DA CUNHA", cpf: "063.919.***-70", sgde: "290033", situacao: "CLASSIFICADO" },
+      { classificacao: "261º", nome: "ALEXSSANDER DA LUZ SILVA", cpf: "063.422.***-99", sgde: "493833", situacao: "CLASSIFICADO" },
+      { classificacao: "262º", nome: "ANA LUIZA PINTO DE MOURA", cpf: "062.983.***-21", sgde: "63392", situacao: "CLASSIFICADO" },
+      { classificacao: "263º", nome: "ANDREIA JOSE SIMÃO VELASQUEZ", cpf: "029.079.***-07", sgde: "1477794", situacao: "CLASSIFICADO" },
+      { classificacao: "264º", nome: "ANDREZA GUEDES PESSOA", cpf: "055.509.***-02", sgde: "175098", situacao: "CLASSIFICADO" },
+      { classificacao: "265º", nome: "ANIELE NASCIMENTO PINTO", cpf: "055.412.***-44", sgde: "52848", situacao: "CLASSIFICADO" },
+      { classificacao: "266º", nome: "BRUNA EVELYN PINHO MARTINS", cpf: "048.470.***-57", sgde: "331987", situacao: "CLASSIFICADO" },
+      { classificacao: "267º", nome: "CLEYSIANY ESTEFFANE GARCIA DE CASTRO", cpf: "058.436.***-31", sgde: "207117", situacao: "CLASSIFICADO" },
+      { classificacao: "268º", nome: "CRISTIANE NEPOMUCENO DE ALMEIDA", cpf: "022.718.***-01", sgde: "1476639", situacao: "CLASSIFICADO" },
+      { classificacao: "269º", nome: "DIANA LETÍCIA DE CARVALHO FERREIRA", cpf: "038.110.***-58", sgde: "249546", situacao: "CLASSIFICADO" },
+      { classificacao: "270º", nome: "FLÁVIA CONCEIÇÃO DO NASCIMENTO ALDANA", cpf: "016.398.***-52", sgde: "1479566", situacao: "CLASSIFICADO" },
+      { classificacao: "271º", nome: "GLAUCILEIA HERREIRA VERA CAZUPA", cpf: "052.590.***-10", sgde: "1260234", situacao: "CLASSIFICADO" },
+      { classificacao: "272º", nome: "GYOVANNA CORRÊA ALVES", cpf: "052.771.***-83", sgde: "332946", situacao: "CLASSIFICADO" },
+      { classificacao: "273º", nome: "JÉSSICA MOREIRA CORREA", cpf: "058.127.***-04", sgde: "336143", situacao: "CLASSIFICADO" },
+      { classificacao: "274º", nome: "JUSSARA SILVA DE LIMA", cpf: "020.592.***-54", sgde: "1475964", situacao: "CLASSIFICADO" },
+      { classificacao: "275º", nome: "KARINE RODRIGUES VIEIRA", cpf: "050.955.***-28", sgde: "510718", situacao: "CLASSIFICADO" },
+      { classificacao: "276º", nome: "KARINY RONDON DE ARRUDA", cpf: "057.262.***-88", sgde: "206394", situacao: "CLASSIFICADO" },
+      { classificacao: "277º", nome: "KETELLYN NALARA SAMPAIO", cpf: "070.577.***-60", sgde: "1198964", situacao: "CLASSIFICADO" },
+      { classificacao: "278º", nome: "LAURA SOUZA DE OLIVEIRA", cpf: "050.136.***-62", sgde: "855718", situacao: "CLASSIFICADO" },
+      { classificacao: "279º", nome: "LUANNE SOUZA DE ARRUDA", cpf: "058.406.***-46", sgde: "352500", situacao: "CLASSIFICADO" },
+      { classificacao: "280º", nome: "SAMERRY DO COUTO MORENO OJEDA", cpf: "057.764.***-08", sgde: "437507", situacao: "CLASSIFICADO" },
+      { classificacao: "281º", nome: "SIMONE VELASQUEZ PASSINHO", cpf: "057.510.***-56", sgde: "348686", situacao: "CLASSIFICADO" },
+      { classificacao: "282º", nome: "ALICE MARTINS CHALEGA", cpf: "052.844.***-90", sgde: "1476087", situacao: "CLASSIFICADO" },
+      { classificacao: "283º", nome: "ALINE DE SALES PEREIRA", cpf: "025.690.***-14", sgde: "462593", situacao: "CLASSIFICADO" },
+      { classificacao: "284º", nome: "CAMILA BARROS DOS SANTOS MAGALHÃES", cpf: "043.134.***-90", sgde: "294605", situacao: "CLASSIFICADO" },
+      { classificacao: "285º", nome: "CLAUDIA SILVA DE ARRUDA", cpf: "024.309.***-26", sgde: "327026", situacao: "CLASSIFICADO" },
+      { classificacao: "286º", nome: "CRISTIANE LEMOS ESCOBAR", cpf: "714.212.***-40", sgde: "1477830", situacao: "CLASSIFICADO" },
+      { classificacao: "287º", nome: "DANIELLE MARTINS DOS SANTOS", cpf: "030.134.***-00", sgde: "1477331", situacao: "CLASSIFICADO" },
+      { classificacao: "288º", nome: "DEBORA DE ARRUDA", cpf: "064.381.***-40", sgde: "1476339", situacao: "CLASSIFICADO" },
+      { classificacao: "289º", nome: "DOUGLAS GABRIEL TABORDA ROJAS", cpf: "031.377.***-70", sgde: "282988", situacao: "CLASSIFICADO" },
+      { classificacao: "290º", nome: "FRANCILENE NUNES MAGALHÃES", cpf: "066.882.***-69", sgde: "332889", situacao: "CLASSIFICADO" },
+      { classificacao: "291º", nome: "GREICE KELLY SILVA MUNIZ", cpf: "121.480.***-58", sgde: "1477092", situacao: "CLASSIFICADO" },
+      { classificacao: "292º", nome: "JOCE SURUBI", cpf: "042.494.***-74", sgde: "1476089", situacao: "CLASSIFICADO" },
+      { classificacao: "293º", nome: "LILYANY FERNANDA GARCIA DE CASTRO", cpf: "067.036.***-25", sgde: "185671", situacao: "CLASSIFICADO" },
+      { classificacao: "294º", nome: "MARILENE SOARES SOLIS", cpf: "058.608.***-59", sgde: "299955", situacao: "CLASSIFICADO" },
+      { classificacao: "295º", nome: "TATIANE GOMES DO NASCIMENTO", cpf: "062.009.***-94", sgde: "117880", situacao: "CLASSIFICADO" },
+      { classificacao: "296º", nome: "TUANY CAMILA SABEDRA DA SILVA", cpf: "069.214.***-66", sgde: "105261", situacao: "CLASSIFICADO" },
+      { classificacao: "297º", nome: "ALINE DOS SANTOS AGUERO", cpf: "043.704.***-25", sgde: "32029", situacao: "CLASSIFICADO" },
+      { classificacao: "298º", nome: "DOUGLAS ROLON SERRA", cpf: "018.507.***-84", sgde: "1479156", situacao: "CLASSIFICADO" },
+      { classificacao: "299º", nome: "ELAINE PEREIRA DA SILVA MORAES", cpf: "018.682.***-70", sgde: "1479216", situacao: "CLASSIFICADO" },
+      { classificacao: "300º", nome: "ESTER SOARES SURUBI GARCIA", cpf: "065.849.***-89", sgde: "781557", situacao: "CLASSIFICADO" },
+      { classificacao: "301º", nome: "FRANCILENE SIQUEIRA BORDAS", cpf: "026.383.***-94", sgde: "1479412", situacao: "CLASSIFICADO" },
+      { classificacao: "302º", nome: "JOSEMARY COSTA OLIVEIRA", cpf: "065.249.***-40", sgde: "891553", situacao: "CLASSIFICADO" },
+      { classificacao: "303º", nome: "JULIANA APARECIDA GOMES GONÇALVES", cpf: "030.902.***-56", sgde: "1479550", situacao: "CLASSIFICADO" },
+      { classificacao: "304º", nome: "KELLY CONTRERAS DO ESPIRITO SANTO", cpf: "705.185.***-98", sgde: "865415", situacao: "CLASSIFICADO" },
+      { classificacao: "305º", nome: "LEIDILENE DE JESUS VELASQUEZ", cpf: "064.767.***-00", sgde: "1479463", situacao: "CLASSIFICADO" },
+      { classificacao: "306º", nome: "MARIA FERNANDA ROA", cpf: "020.410.***-10", sgde: "1475978", situacao: "CLASSIFICADO" },
+      { classificacao: "307º", nome: "MARIANA INES DE JESUS PAULO", cpf: "065.967.***-05", sgde: "1475941", situacao: "CLASSIFICADO" },
+      { classificacao: "308º", nome: "PATRÍCIA GONZAGA PENHA DOS SANTOS", cpf: "064.593.***-58", sgde: "178549", situacao: "CLASSIFICADO" },
+      { classificacao: "309º", nome: "ROSINEIA SILVA DE MORAES", cpf: "036.350.***-07", sgde: "1479067", situacao: "CLASSIFICADO" },
+      { classificacao: "310º", nome: "AMANDA PEREIRA DE LIMA", cpf: "065.305.***-70", sgde: "46844", situacao: "CLASSIFICADO" },
+      { classificacao: "311º", nome: "ANDRESSA BARRETO DE OLIVEIRA", cpf: "063.024.***-44", sgde: "161146", situacao: "CLASSIFICADO" },
+      { classificacao: "312º", nome: "BRUNA APARECIDA ROSA DA SILVA", cpf: "408.740.***-20", sgde: "836705", situacao: "CLASSIFICADO" },
+      { classificacao: "313º", nome: "CAMILA ARRUDA DO AMARAL", cpf: "041.854.***-89", sgde: "1476472", situacao: "CLASSIFICADO" },
+      { classificacao: "314º", nome: "CARLA CONCEIÇÃO CASTELLO DE ARRUDA", cpf: "060.484.***-28", sgde: "272835", situacao: "CLASSIFICADO" },
+      { classificacao: "315º", nome: "CINTHYA DO NASCIMENTO CARDOSO BEZERRA", cpf: "045.785.***-11", sgde: "1477441", situacao: "CLASSIFICADO" },
+      { classificacao: "316º", nome: "ISABELA COSTA SILVA BARBOZA", cpf: "070.436.***-33", sgde: "850116", situacao: "CLASSIFICADO" },
+      { classificacao: "317º", nome: "JENIFFER HURTADO CORREA ALBUQUERQUE", cpf: "070.026.***-13", sgde: "1476394", situacao: "CLASSIFICADO" },
+      { classificacao: "318º", nome: "JESSICA RODRIGUES LELLIS", cpf: "034.139.***-02", sgde: "1476599", situacao: "CLASSIFICADO" },
+      { classificacao: "319º", nome: "JOSIANE FERNANDES FARIA", cpf: "001.803.***-06", sgde: "1479517", situacao: "CLASSIFICADO" },
+      { classificacao: "320º", nome: "JULUZIA ALVES PEREIRA", cpf: "062.583.***-50", sgde: "196063", situacao: "CLASSIFICADO" },
+      { classificacao: "321º", nome: "KELCY DA SILVA ALBERTONE", cpf: "066.978.***-30", sgde: "764529", situacao: "CLASSIFICADO" },
+      { classificacao: "322º", nome: "LARISSA CASTELLO DE SOUZA", cpf: "067.245.***-06", sgde: "346988", situacao: "CLASSIFICADO" },
+      { classificacao: "323º", nome: "MIRIAM PEREIRA LEITE", cpf: "086.029.***-79", sgde: "39319", situacao: "CLASSIFICADO" },
+      { classificacao: "324º", nome: "PAOLA PINTO DA SILVA", cpf: "072.008.***-88", sgde: "155910", situacao: "CLASSIFICADO" },
+      { classificacao: "325º", nome: "ROSEANE DE OLIVEIRA BARBOSA", cpf: "064.299.***-16", sgde: "330361", situacao: "CLASSIFICADO" },
+      { classificacao: "326º", nome: "SHIRLEY VIEIRA RODRIGUES", cpf: "069.670.***-81", sgde: "922574", situacao: "CLASSIFICADO" },
+      { classificacao: "327º", nome: "SYBELLE VELASQUES CUNHA", cpf: "066.944.***-03", sgde: "257465", situacao: "CLASSIFICADO" },
+      { classificacao: "328º", nome: "TATIANE DE SOUZA SILVA", cpf: "063.313.***-44", sgde: "1476070", situacao: "CLASSIFICADO" },
+      { classificacao: "329º", nome: "TAYNARA QUEIROZ DE OLIVEIRA", cpf: "065.017.***-80", sgde: "769145", situacao: "CLASSIFICADO" },
+      { classificacao: "330º", nome: "THAICE MAURIANE SILVA OLIVEIRA RIBEIRO", cpf: "063.083.***-74", sgde: "1478923", situacao: "CLASSIFICADO" },
+      { classificacao: "331º", nome: "VICTOR HUGO FERNANDES BRAJOWITCH", cpf: "070.417.***-60", sgde: "772974", situacao: "CLASSIFICADO" },
+      { classificacao: "332º", nome: "GRACIELY BRITO SORRILHA", cpf: "100.372.***-05", sgde: "1007033", situacao: "CLASSIFICADO" },
+      { classificacao: "333º", nome: "LETICIA DA SILVA CARDOZO", cpf: "066.964.***-25", sgde: "758717", situacao: "CLASSIFICADO" },
+      { classificacao: "334º", nome: "MARIA EDUARDA DA SILVA PEREZ", cpf: "073.012.***-09", sgde: "95221", situacao: "CLASSIFICADO" },
+      { classificacao: "335º", nome: "RAISSA RODRIGUES NAVARROS", cpf: "070.449.***-42", sgde: "204464", situacao: "CLASSIFICADO" },
+      { classificacao: "336º", nome: "REGILLYN LARANJEIRA DA COSTA", cpf: "045.494.***-52", sgde: "930787", situacao: "CLASSIFICADO" },
+      { classificacao: "337º", nome: "RENATHA HOFFMANN NAVARROS", cpf: "079.528.***-90", sgde: "938607", situacao: "CLASSIFICADO" },
+      { classificacao: "338º", nome: "ROSIELLY FERREIRA CAMARGO SAMPAIO", cpf: "072.500.***-30", sgde: "183719", situacao: "CLASSIFICADO" },
+      { classificacao: "339º", nome: "THAIANE MILLENA DA SILVA COUVO", cpf: "067.452.***-54", sgde: "493826", situacao: "CLASSIFICADO" },
+      { classificacao: "340º", nome: "AISSA LIMA DOS SANTOS", cpf: "078.473.***-02", sgde: "937247", situacao: "CLASSIFICADO" },
+      { classificacao: "341º", nome: "CAROLINE MORAES RAMOS", cpf: "049.051.***-13", sgde: "1477512", situacao: "CLASSIFICADO" },
+      { classificacao: "342º", nome: "DÉBORA CRISTINA SANTOS DA SILVA", cpf: "028.365.***-60", sgde: "1476577", situacao: "CLASSIFICADO" },
+      { classificacao: "343º", nome: "ELEN MACIEL SALES", cpf: "092.449.***-11", sgde: "772122", situacao: "CLASSIFICADO" },
+      { classificacao: "344º", nome: "FERNANDA DE FÁTIMA D'AVILA LEITE", cpf: "730.259.***-00", sgde: "927600", situacao: "CLASSIFICADO" },
+      { classificacao: "345º", nome: "HELLEN CONCEIÇÃO DA SILVA", cpf: "095.814.***-08", sgde: "839495", situacao: "CLASSIFICADO" },
+      { classificacao: "346º", nome: "ISADORA PICARDO DE MENDONÇA", cpf: "074.846.***-01", sgde: "3001", situacao: "CLASSIFICADO" },
+      { classificacao: "347º", nome: "JESSICA GIEDRY PEÑAZ DUARTE", cpf: "034.207.***-76", sgde: "1476199", situacao: "CLASSIFICADO" },
+      { classificacao: "348º", nome: "JOYCE LAINE DA SILVA GONÇALVES", cpf: "078.093.***-24", sgde: "841516", situacao: "CLASSIFICADO" },
+      { classificacao: "349º", nome: "JULIANA DE ARAUJO ROJAS", cpf: "074.930.***-60", sgde: "199807", situacao: "CLASSIFICADO" },
+      { classificacao: "350º", nome: "KAMILA CUSTÓDIO DUARTE", cpf: "076.693.***-99", sgde: "105325", situacao: "CLASSIFICADO" },
+      { classificacao: "351º", nome: "LUCIANA APARECIDA DA SILVA GOMES", cpf: "020.098.***-90", sgde: "1476811", situacao: "CLASSIFICADO" },
+      { classificacao: "352º", nome: "MORGANNA MARIA JESUS DE SOUZA", cpf: "083.721.***-54", sgde: "859913", situacao: "CLASSIFICADO" },
+      { classificacao: "353º", nome: "NATHANY KLICIA DA SILVA CAVASSA MAGALHAES", cpf: "032.067.***-64", sgde: "1477518", situacao: "CLASSIFICADO" },
+      { classificacao: "354º", nome: "RITA DE CASSIA BARBOSA FERREIRA DA SILVA", cpf: "031.109.***-66", sgde: "1475931", situacao: "CLASSIFICADO" },
+      { classificacao: "355º", nome: "TATIANE CONCEIÇÃO DUARTE DE ARAÚJO", cpf: "025.875.***-84", sgde: "1476555", situacao: "CLASSIFICADO" },
+      { classificacao: "356º", nome: "EDEVANIA VILLCA COPA", cpf: "066.449.***-03", sgde: "297432", situacao: "CLASSIFICADO" },
+      { classificacao: "357º", nome: "ÉRICA SOARES GARCIA", cpf: "081.865.***-52", sgde: "1043783", situacao: "CLASSIFICADO" },
+      { classificacao: "358º", nome: "ISABELA BEATRIZ ZEFERINO DE ALMEIDA", cpf: "703.203.***-25", sgde: "222780", situacao: "CLASSIFICADO" },
+      { classificacao: "359º", nome: "JARIANE DOS SANTOS PAES", cpf: "073.269.***-43", sgde: "1011508", situacao: "CLASSIFICADO" },
+      { classificacao: "360º", nome: "JASMIM CABRAL FERREIRA", cpf: "703.442.***-87", sgde: "507477", situacao: "CLASSIFICADO" },
+      { classificacao: "361º", nome: "JESIMIEL ELIAS LOPES DA SILVA LIMA", cpf: "060.144.***-63", sgde: "1028530", situacao: "CLASSIFICADO" },
+      { classificacao: "362º", nome: "JESSICA DA CUNHA ASSUMPÇÃO", cpf: "041.736.***-95", sgde: "1476508", situacao: "CLASSIFICADO" },
+      { classificacao: "363º", nome: "JOÃO VITOR COSTA DOS SANTOS", cpf: "068.173.***-80", sgde: "502755", situacao: "CLASSIFICADO" },
+      { classificacao: "364º", nome: "JOSIQUELI  CAMPOS DOS SANTOS", cpf: "072.261.***-39", sgde: "668357", situacao: "CLASSIFICADO" },
+      { classificacao: "365º", nome: "KERCY APARECIDA MARTINS PESSOA", cpf: "034.632.***-66", sgde: "1476363", situacao: "CLASSIFICADO" },
+      { classificacao: "366º", nome: "LAIS LIDIANE PARA VELASQUES", cpf: "070.344.***-16", sgde: "1037544", situacao: "CLASSIFICADO" },
+      { classificacao: "367º", nome: "PAULA HELENA DE AMORIM SILVA BERFT", cpf: "044.208.***-24", sgde: "1479496", situacao: "CLASSIFICADO" },
+      { classificacao: "368º", nome: "SAMARA CHRISTINY AMORIM DE ARAUJO", cpf: "077.413.***-13", sgde: "908493", situacao: "CLASSIFICADO" },
+      { classificacao: "369º", nome: "SUANY THALIA ANTUNES SAMPAIO", cpf: "103.119.***-84", sgde: "1299030", situacao: "CLASSIFICADO" },
+      { classificacao: "370º", nome: "ANDRESSA MIRANDA DE SANT ANA", cpf: "151.886.***-28", sgde: "1476822", situacao: "CLASSIFICADO" },
+      { classificacao: "371º", nome: "DEISE RAMOS SURUBI", cpf: "042.614.***-54", sgde: "1476219", situacao: "CLASSIFICADO" },
+      { classificacao: "372º", nome: "GIUSEPPE GABRIEL RAMOS MAIOR", cpf: "048.141.***-06", sgde: "1104329", situacao: "CLASSIFICADO" },
+      { classificacao: "373º", nome: "JESSICA MAYARA MARTINS RUIZ NUNES", cpf: "050.447.***-41", sgde: "1477205", situacao: "CLASSIFICADO" },
+      { classificacao: "374º", nome: "KETHERINE FLEITAS DE ARRUDA", cpf: "098.188.***-29", sgde: "1088547", situacao: "CLASSIFICADO" },
+      { classificacao: "375º", nome: "LUCIA GOMES DE OLIVEIRA", cpf: "031.488.***-03", sgde: "1478912", situacao: "CLASSIFICADO" },
+      { classificacao: "376º", nome: "MICHELLE CRISTINA SAUCEDO CABRAL SILVA", cpf: "047.196.***-16", sgde: "1479426", situacao: "CLASSIFICADO" },
+      { classificacao: "377º", nome: "MIRIAN DE BRITO SORRILHA", cpf: "099.681.***-66", sgde: "1007050", situacao: "CLASSIFICADO" },
+      { classificacao: "378º", nome: "TATIANNE MONTEIRO SORUGO", cpf: "044.009.***-28", sgde: "1479379", situacao: "CLASSIFICADO" },
+      { classificacao: "379º", nome: "THAYANE DE LIMA ZORIO", cpf: "065.875.***-61", sgde: "1017664", situacao: "CLASSIFICADO" },
+      { classificacao: "380º", nome: "YASMIN LUANE BRAGA PINHO", cpf: "080.292.***-67", sgde: "1303901", situacao: "CLASSIFICADO" },
+      { classificacao: "381º", nome: "CLAUDIA RENATA SUAREZ MELGAR", cpf: "039.266.***-30", sgde: "1477472", situacao: "CLASSIFICADO" },
+      { classificacao: "382º", nome: "DANIELA OLIVEIRA DO AMARAL", cpf: "048.438.***-69", sgde: "1479398", situacao: "CLASSIFICADO" },
+      { classificacao: "383º", nome: "GABRIELA PATRICIA NERES DA SILVA", cpf: "097.402.***-14", sgde: "343577", situacao: "CLASSIFICADO" },
+      { classificacao: "384º", nome: "GEYCIELI YASMIN DE ARRUDA MELO", cpf: "052.180.***-69", sgde: "1136049", situacao: "CLASSIFICADO" },
+      { classificacao: "385º", nome: "KLEYDSON ALBERTO DE JESUS SOARES", cpf: "075.971.***-61", sgde: "334250", situacao: "CLASSIFICADO" },
+      { classificacao: "386º", nome: "LAIRA  ARDAIA  MODESTO", cpf: "096.496.***-60", sgde: "1112781", situacao: "CLASSIFICADO" },
+      { classificacao: "387º", nome: "PAULO CESAR DE BARROS MENDES", cpf: "089.119.***-80", sgde: "1129774", situacao: "CLASSIFICADO" },
+      { classificacao: "388º", nome: "FELIPE LIMA DA CUNHA", cpf: "096.362.***-01", sgde: "1242655", situacao: "CLASSIFICADO" },
+      { classificacao: "389º", nome: "GABRIELLY VELASQUES GONÇALVES", cpf: "108.162.***-46", sgde: "1222987", situacao: "CLASSIFICADO" },
+      { classificacao: "390º", nome: "GILMARA APARECIDA BAZAN DA SILVA", cpf: "078.765.***-21", sgde: "1122825", situacao: "CLASSIFICADO" },
+      { classificacao: "391º", nome: "JOICE CAROLINE FONSECA DA SILVA", cpf: "105.279.***-32", sgde: "1187858", situacao: "CLASSIFICADO" },
+      { classificacao: "392º", nome: "MARIA EDUARDA DIAS DA SILVA", cpf: "071.808.***-30", sgde: "328469", situacao: "CLASSIFICADO" },
+      { classificacao: "393º", nome: "MARIA EDUARDA SOUZA SILVA", cpf: "079.528.***-64", sgde: "1476135", situacao: "CLASSIFICADO" },
+      { classificacao: "394º", nome: "RAIANE APARECIDA FURTADO DA SILVA", cpf: "089.728.***-38", sgde: "1158723", situacao: "CLASSIFICADO" },
+      { classificacao: "395º", nome: "THAMYRIS FERNANDES CORREIA DA SILVA", cpf: "084.203.***-84", sgde: "928425", situacao: "CLASSIFICADO" },
+      { classificacao: "396º", nome: "ADRIELLY SANTA ROSA DE OLIVEIRA PIMENTA", cpf: "069.435.***-77", sgde: "1150521", situacao: "CLASSIFICADO" },
+      { classificacao: "397º", nome: "ALLEFISON DAVID DA SILVA MENDOZA", cpf: "113.018.***-36", sgde: "424426", situacao: "CLASSIFICADO" },
+      { classificacao: "398º", nome: "CAMILI CAMPOS DE ARRUDA DINIZ", cpf: "077.807.***-02", sgde: "1176572", situacao: "CLASSIFICADO" },
+      { classificacao: "399º", nome: "ELERIANE DO CARMO ROCA RODRIGUES", cpf: "040.299.***-77", sgde: "1477543", situacao: "CLASSIFICADO" },
+      { classificacao: "400º", nome: "GEICY KEVELLEN LEMOS DE OLIVEIRA", cpf: "076.211.***-67", sgde: "840367", situacao: "CLASSIFICADO" },
+      { classificacao: "401º", nome: "JOAQUIM NEPOMUCENO DE ALMEIDA NETO", cpf: "703.203.***-81", sgde: "1118714", situacao: "CLASSIFICADO" },
+      { classificacao: "402º", nome: "LARISSA SOARES DE SOUZA", cpf: "066.876.***-70", sgde: "1217936", situacao: "CLASSIFICADO" },
+      { classificacao: "403º", nome: "LARYSSA CAROLINE MIDON", cpf: "072.698.***-61", sgde: "1201836", situacao: "CLASSIFICADO" },
+      { classificacao: "404º", nome: "LETICIA CONCEIÇÃO GONÇALVES RODRIGUES", cpf: "043.315.***-00", sgde: "1477399", situacao: "CLASSIFICADO" },
+      { classificacao: "405º", nome: "MIKAELLY SIQUEIRA DA COSTA ARRUDA", cpf: "706.946.***-00", sgde: "1201101", situacao: "CLASSIFICADO" },
+      { classificacao: "406º", nome: "MIRELLA ROMÃO RODRIGUES", cpf: "115.133.***-46", sgde: "1202999", situacao: "CLASSIFICADO" },
+      { classificacao: "407º", nome: "MIRELLY VICTORIA CAMPOS DE ARRUDA", cpf: "107.006.***-97", sgde: "1171341", situacao: "CLASSIFICADO" },
+      { classificacao: "408º", nome: "RAYSSA RONDON DA SILVA", cpf: "088.329.***-05", sgde: "500696", situacao: "CLASSIFICADO" },
+      { classificacao: "409º", nome: "ANDREIA DE SOUZA MANCILHA", cpf: "045.425.***-90", sgde: "1477325", situacao: "CLASSIFICADO" },
+      { classificacao: "410º", nome: "CAROLINA NASCIMENTO DA SILVA", cpf: "101.076.***-08", sgde: "1297258", situacao: "CLASSIFICADO" },
+      { classificacao: "411º", nome: "DAIANE BOGADO PEREIRA DA SILVA", cpf: "068.763.***-57", sgde: "1479851", situacao: "CLASSIFICADO" },
+      { classificacao: "412º", nome: "DEJANIRA CONCEIÇÃO DA SILVA", cpf: "064.638.***-81", sgde: "1476734", situacao: "CLASSIFICADO" },
+      { classificacao: "413º", nome: "FRANCIELLY MONTEIRO MORAES", cpf: "700.112.***-24", sgde: "1128430", situacao: "CLASSIFICADO" },
+      { classificacao: "414º", nome: "GUSTAVO PEREIRA CARVALHO", cpf: "119.434.***-83", sgde: "932452", situacao: "CLASSIFICADO" },
+      { classificacao: "415º", nome: "ISABELLY DA SILVA SALES DE AMORIM", cpf: "091.334.***-18", sgde: "1280663", situacao: "CLASSIFICADO" },
+      { classificacao: "416º", nome: "ISAQUE CONCEIÇÃO DA SILVA", cpf: "110.168.***-32", sgde: "1242476", situacao: "CLASSIFICADO" },
+      { classificacao: "417º", nome: "JAMILY MARTINS DE GODOI", cpf: "087.695.***-55", sgde: "881705", situacao: "CLASSIFICADO" },
+      { classificacao: "418º", nome: "JOICY GALAN DA COSTA", cpf: "092.829.***-03", sgde: "1238255", situacao: "CLASSIFICADO" },
+      { classificacao: "419º", nome: "JULIANA APARECIDA COSTA FLORES", cpf: "060.282.***-92", sgde: "1476378", situacao: "CLASSIFICADO" },
+      { classificacao: "420º", nome: "KAROLAYNE LEIGUEZ FERNANDES", cpf: "067.278.***-76", sgde: "1476049", situacao: "CLASSIFICADO" },
+      { classificacao: "421º", nome: "KAUANE BORDAS MARQUES", cpf: "102.369.***-93", sgde: "1281880", situacao: "CLASSIFICADO" },
+      { classificacao: "422º", nome: "ALLANA DAS NEVES PESSOA", cpf: "114.055.***-42", sgde: "1281807", situacao: "CLASSIFICADO" },
+      { classificacao: "423º", nome: "ANA CAROLINY CAMARGO DOS SANTOS CÁCERES", cpf: "054.054.***-09", sgde: "1476543", situacao: "CLASSIFICADO" },
+      { classificacao: "424º", nome: "INGRID ITEFONNY BATUAREZ LEMOS", cpf: "104.804.***-57", sgde: "1321785", situacao: "CLASSIFICADO" },
+      { classificacao: "425º", nome: "MARIA GABRIELLY RAMOS MAIOR", cpf: "048.141.***-88", sgde: "1324173", situacao: "CLASSIFICADO" },
+      { classificacao: "426º", nome: "MEDELENE FRANCO DA CRUZ", cpf: "172.724.***-10", sgde: "1239917", situacao: "CLASSIFICADO" },
+      { classificacao: "427º", nome: "TAMIRES AMARO DOS SANTOS", cpf: "099.666.***-80", sgde: "752976", situacao: "CLASSIFICADO" },
+      { classificacao: "428º", nome: "VINICIUS GONÇALVES DOS SANTOS", cpf: "086.081.***-77", sgde: "1108413", situacao: "CLASSIFICADO" },
+      { classificacao: "429º", nome: "VITÓRIA DA COSTA MOURA", cpf: "097.134.***-93", sgde: "836375", situacao: "CLASSIFICADO" },
+      { classificacao: "430º", nome: "VYTÓRIA DOS SANTOS ALAMAN", cpf: "101.482.***-90", sgde: "864932", situacao: "CLASSIFICADO" },
+      { classificacao: "431º", nome: "ANA LÍVINA DE SOUZA RODRIGUES", cpf: "198.581.***-04", sgde: "1345936", situacao: "CLASSIFICADO" },
+      { classificacao: "432º", nome: "ISADORA RIBEIRO DE SOUZA", cpf: "047.604.***-13", sgde: "756198", situacao: "CLASSIFICADO" },
+      { classificacao: "433º", nome: "MARIA CLARA SOARES SOUZA", cpf: "096.528.***-00", sgde: "1281117", situacao: "CLASSIFICADO" },
+      { classificacao: "434º", nome: "MARIA EDUARDA RICARDI PEDRASSA", cpf: "098.626.***-43", sgde: "1280337", situacao: "CLASSIFICADO" },
+      { classificacao: "435º", nome: "MIRIANY DE JESUS VELASQUEZ", cpf: "072.448.***-80", sgde: "763251", situacao: "CLASSIFICADO" },
+      { classificacao: "436º", nome: "MYRELLA STEFANY ROJAS DA SILVA", cpf: "106.636.***-36", sgde: "1289174", situacao: "CLASSIFICADO" },
+      { classificacao: "437º", nome: "SARAH LIMA DINIZ", cpf: "085.626.***-38", sgde: "916195", situacao: "CLASSIFICADO" },
+      { classificacao: "438º", nome: "ALEXANDRA THAMIRIS CARVALHO LEITE", cpf: "072.447.***-45", sgde: "1477853", situacao: "CLASSIFICADO" },
+      { classificacao: "439º", nome: "PAMELA LENIR DE LIMA ZORIO", cpf: "065.875.***-80", sgde: "1478958", situacao: "CLASSIFICADO" },
+      { classificacao: "440º", nome: "ROSELAYNE OLIVEIRA ROAS", cpf: "068.685.***-30", sgde: "1477239", situacao: "CLASSIFICADO" },
+      { classificacao: "441º", nome: "ALICE DE SOUZA GONÇALVES", cpf: "073.792.***-83", sgde: "1477452", situacao: "CLASSIFICADO" },
+      { classificacao: "442º", nome: "JACQUELINE MARCONDES DE SOUZA PINHEIROS", cpf: "070.968.***-29", sgde: "1477829", situacao: "CLASSIFICADO" },
+      { classificacao: "443º", nome: "MARIA EDUARDA PESSOA KUKIEL", cpf: "090.409.***-12", sgde: "1477465", situacao: "CLASSIFICADO" }
+    ];
+
+    const defaultConfig = {
+      school_name: "Escola Estadual Dr. João Leite de Barros",
+      course_name: "Curso Normal Médio - Alunos Selecionados 2025",
+      primary_color: "#15803d",
+      secondary_color: "#166534",
+      background_color: "#f0fdf4",
+      text_color: "#1f2937",
+      accent_color: "#22c55e"
+    };
+
+    // Initialize SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          document.getElementById('school-title').textContent = config.school_name || defaultConfig.school_name;
+          document.getElementById('course-title').textContent = config.course_name || defaultConfig.course_name;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => window.elementSdk.setConfig({ background_color: value })
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => window.elementSdk.setConfig({ primary_color: value })
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => window.elementSdk.setConfig({ text_color: value })
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["school_name", config.school_name || defaultConfig.school_name],
+          ["course_name", config.course_name || defaultConfig.course_name]
+        ])
+      });
+    }
+
+    // Tab navigation
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('text-green-700', 'border-green-600', 'bg-green-50');
+        el.classList.add('text-gray-500', 'border-transparent');
+      });
+      
+      document.getElementById(`section-${tabName}`).classList.remove('hidden');
+      const activeTab = document.getElementById(`tab-${tabName}`);
+      activeTab.classList.add('text-green-700', 'border-green-600', 'bg-green-50');
+      activeTab.classList.remove('text-gray-500', 'border-transparent');
+    }
+
+    // Search functionality
+    function handleSearch(event) {
+      if (event.key === 'Enter') {
+        searchStudent();
+      }
+    }
+
+    function searchStudent() {
+      const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+      const resultDiv = document.getElementById('search-result');
+      
+      if (!searchTerm) {
+        resultDiv.classList.add('hidden');
+        return;
+      }
+
+      const found = students.filter(s => 
+        s.nome.toLowerCase().includes(searchTerm) || 
+        s.classificacao.toLowerCase().includes(searchTerm) ||
+        (s.sgde && s.sgde.toString().includes(searchTerm))
+      );
+
+      if (found.length > 0) {
+        resultDiv.innerHTML = found.map(student => {
+          const isSelected = parseInt(student.classificacao.match(/\d+/)[0]) <= 152;
+          return `
+          <div class="bg-gradient-to-r ${isSelected ? 'from-green-500 to-green-600' : 'from-amber-500 to-amber-600'} rounded-2xl shadow-xl p-8 text-white mb-4 animate-fade-in">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                <span class="text-4xl">${isSelected ? '🎉' : '⏳'}</span>
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold">${isSelected ? 'Parabéns!' : 'Você está na fila!'}</h3>
+                <p class="${isSelected ? 'text-green-100' : 'text-amber-100'}">
+                  ${isSelected ? 'Você foi selecionado(a)!' : 'Você está na lista de espera'}
+                </p>
+              </div>
+            </div>
+            <div class="${isSelected ? 'bg-white/20' : 'bg-white/20'} rounded-xl p-4 backdrop-blur">
+              <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'} mb-1">Candidato(a)</p>
+              <p class="text-xl font-bold">${student.nome}</p>
+              <div class="flex gap-6 mt-3">
+                <div>
+                  <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'}">Classificação</p>
+                  <p class="font-semibold text-lg">${student.classificacao}</p>
+                </div>
+                <div>
+                  <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'}">Nº SGDE</p>
+                  <p class="font-semibold">${student.sgde}</p>
+                </div>
+                <div>
+                  <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'}">Situação</p>
+                  <p class="font-semibold flex items-center gap-2">
+                    <span class="w-3 h-3 ${isSelected ? 'bg-green-300' : 'bg-amber-300'} rounded-full animate-pulse"></span>
+                    ${isSelected ? 'CLASSIFICADO' : 'FILA DE ESPERA'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 p-4 ${isSelected ? 'bg-white/10' : 'bg-white/10'} rounded-xl">
+              <p class="text-sm">
+                ${isSelected ? '📄 <strong>Próximo passo:</strong> Confira a aba "Documentos para Matrícula" e compareça à secretaria da escola com toda a documentação necessária.' : '⏳ <strong>Informação:</strong> Você está na fila de espera. Acompanhe a instituição para atualizações sobre possíveis chamadas.'}
+              </p>
+            </div>
+          </div>
+        `}).join('');
+        resultDiv.classList.remove('hidden');
+      } else {
+        resultDiv.innerHTML = `
+          <div class="bg-white rounded-2xl shadow-xl p-8 border-l-4 border-gray-400">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
+                <span class="text-3xl">🔍</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-700">Nenhum resultado encontrado</h3>
+                <p class="text-gray-500">Não encontramos o nome ou número de inscrição "<strong>${document.getElementById('search-input').value}</strong>" na lista de candidatos.</p>
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-500">Verifique se digitou corretamente ou consulte a lista completa.</p>
+          </div>
+        `;
+        resultDiv.classList.remove('hidden');
+      }
+    }
+
+    // Populate students table
+    function populateTable() {
+      const tbody = document.getElementById('students-table');
+      tbody.innerHTML = students.map((student, index) => {
+        const isSelected = parseInt(student.classificacao.match(/\d+/)[0]) <= 152;
+        const situacao = isSelected ? 'CLASSIFICADO' : 'FILA DE ESPERA';
+        const bgColor = isSelected ? 'bg-green-100' : 'bg-amber-100';
+        const textColor = isSelected ? 'text-green-700' : 'text-amber-700';
+        return `
+        <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition-colors">
+          <td class="px-4 py-3 text-center font-bold text-green-700">${student.classificacao}</td>
+          <td class="px-4 py-3 text-gray-800">${student.nome}</td>
+          <td class="px-4 py-3 text-center">
+            <span class="inline-flex items-center gap-1 px-3 py-1 ${bgColor} ${textColor} rounded-full text-sm font-medium">
+              <span class="w-2 h-2 ${isSelected ? 'bg-green-500' : 'bg-amber-500'} rounded-full"></span>
+              ${situacao}
+            </span>
+          </td>
+        </tr>
+      `;
+      }).join('');
+      
+      document.getElementById('total-count').textContent = students.length;
+    }
+
+    // Initialize
+    populateTable();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60e33a934f031d',t:'MTc3MjQ1OTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
