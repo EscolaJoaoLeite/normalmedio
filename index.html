@@ -14,33 +14,6 @@
   <style>body { box-sizing: border-box; }</style>
   
  </head>
-
-	<script>
-async function atualizarContador() {
-
-  // Nome único do seu site (pode alterar se quiser)
-  const namespace = "escola-jlb-2026";
-  const key = "acessos";
-
-  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    document.getElementById("access-counter")
-      .innerText = data.value.toLocaleString("pt-BR");
-
-  } catch (erro) {
-    document.getElementById("access-counter")
-      .innerText = "—";
-    console.error("Erro no contador:", erro);
-  }
-}
-
-atualizarContador();
-</script>
-	
  <body class="h-full bg-gradient-to-br from-green-50 to-white">
   <div id="app" class="h-full overflow-auto">
    <!-- Header -->
@@ -71,10 +44,10 @@ atualizarContador();
     <section id="section-consulta" class="tab-content">
      <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-2">Consulte seu Resultado</h2>
-      <p class="text-gray-500 mb-6">Digite seu nome ou número de inscrição para verificar se foi selecionado(a)</p>
+      <p class="text-gray-500 mb-6">Digite seu nome ou Código do Aluno (SGDE) para verificar se foi selecionado(a)</p>
       <div class="flex flex-col md:flex-row gap-4">
        <div class="flex-1 relative">
-        <input type="text" id="search-input" placeholder="Digite seu nome ou número Código do Aluno (SGDE)..." class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none transition-all" onkeyup="handleSearch(event)"> <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+        <input type="text" id="search-input" placeholder="Digite seu o nome ou número do Código de Aluno (SGDE)..." class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none transition-all" onkeyup="handleSearch(event)"> <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
          </svg></span>
@@ -225,6 +198,34 @@ atualizarContador();
     </div>
   </div>
 </footer>
+
+	<script>
+async function atualizarContador() {
+
+  // Nome único do seu site (pode alterar se quiser)
+  const namespace = "escola-jlb-2026";
+  const key = "acessos";
+
+  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    document.getElementById("access-counter")
+      .innerText = data.value.toLocaleString("pt-BR");
+
+  } catch (erro) {
+    document.getElementById("access-counter")
+      .innerText = "—";
+    console.error("Erro no contador:", erro);
+  }
+}
+
+atualizarContador();
+</script>
+	
+	  
   </div>
   <script>
     // Lista de alunos selecionados baseada na planilha - 443 candidatos
@@ -676,7 +677,7 @@ atualizarContador();
 
     const defaultConfig = {
       school_name: "Escola Estadual Dr. João Leite de Barros",
-      course_name: "Curso Normal Médio - Alunos Selecionados 2025",
+      course_name: "Curso Normal Médio - Alunos Selecionados 2026",
       primary_color: "#15803d",
       secondary_color: "#166534",
       background_color: "#f0fdf4",
@@ -849,6 +850,7 @@ atualizarContador();
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60e33a934f031d',t:'MTc3MjQ1OTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 </html>
+
 
 
 
