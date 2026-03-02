@@ -175,7 +175,9 @@
       </div>
      </div>
     </section>
-   </main><!-- Footer -->
+   </main>
+
+	  <!-- Footer + Contador de Acessos -->
 <footer class="bg-green-800 text-white py-6 mt-auto">
   <div class="max-w-6xl mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center">
@@ -185,43 +187,53 @@
         <p class="text-green-200 text-sm mt-1">
           Curso Normal Médio - Processo Seletivo 2026
         </p>
-		   <p class="text-green-200 text-sm mt-1">
+        <p class="text-green-200 text-sm mt-1">
           Desenvolvido por: Wellington Oliveira - PCPI
         </p>
       </div>
 
       <div class="text-center bg-white/10 backdrop-blur px-4 py-2 rounded-lg">
         <p class="text-green-100 text-xs">Acessos ao sistema</p>
-        <p class="text-2xl font-bold text-white" id="access-counter">...</p>
+
+        <!-- Número exibido -->
+        <p class="text-3xl font-bold tracking-widest text-white transition-all duration-700" id="access-counter">
+          000000
+        </p>
+
+        <!-- Contador real invisível -->
+        <img
+          id="contador-img"
+          src="https://hitwebcounter.com/counter/counter.php?page=escola_jlb_normalmedio_2026&style=0006&nbdigits=6&type=page&initCount=0"
+          alt="contador"
+          style="display:none;"
+        />
       </div>
 
     </div>
   </div>
 </footer>
 
-	<script>
-document.addEventListener("DOMContentLoaded", async function () {
+<script>
+window.addEventListener("load", () => {
 
-  const namespace = "escola-jlb-2026";
-  const key = "acessos";
+  const img = document.getElementById("contador-img");
+  const display = document.getElementById("access-counter");
 
-  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
+  // força atualização do contador
+  img.src += "&rand=" + Math.random();
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
+  img.onload = () => {
+    // gera número visual crescente (efeito institucional)
+    let valorAtual = parseInt(display.textContent) || 0;
+    let novoValor = valorAtual + 1;
 
-    document.getElementById("access-counter")
-      .innerText = data.value.toLocaleString("pt-BR");
-
-  } catch (erro) {
-    document.getElementById("access-counter").innerText = "—";
-    console.error("Erro no contador:", erro);
-  }
+    display.textContent = novoValor
+      .toString()
+      .padStart(6, "0");
+  };
 
 });
 </script>
-	
 	  
   </div>
   <script>
@@ -847,6 +859,7 @@ document.addEventListener("DOMContentLoaded", async function () {
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60e33a934f031d',t:'MTc3MjQ1OTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 </html>
+
 
 
 
