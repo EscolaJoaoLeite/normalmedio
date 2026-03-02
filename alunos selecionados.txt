@@ -5,22 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Consulta de Alunos Selecionados</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
+  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Poppins', sans-serif; }
     .search-highlight { background: linear-gradient(120deg, #bbf7d0 0%, #bbf7d0 100%); }
   </style>
   <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  
  </head>
  <body class="h-full bg-gradient-to-br from-green-50 to-white">
-  <div id="app" class="h-full overflow-auto"><!-- Header -->
+  <div id="app" class="h-full overflow-auto">
+   <!-- Header -->
    <header class="bg-gradient-to-r from-green-700 to-green-600 text-white shadow-lg">
     <div class="max-w-6xl mx-auto px-4 py-6">
      <div class="flex items-center gap-4">
       <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md">
-       <svg class="w-10 h-10 text-green-700" fill="currentColor" viewbox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
+       <svg class="w-10 h-10 text-green-700" fill="currentColor" viewbox="0 0 24 24">
+        <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
        </svg>
       </div>
       <div>
@@ -32,23 +34,28 @@
    </header><!-- Navigation Tabs -->
    <nav class="bg-white shadow-md sticky top-0 z-10">
     <div class="max-w-6xl mx-auto px-4">
-     <div class="flex gap-1"><button onclick="showTab('consulta')" id="tab-consulta" class="tab-btn px-6 py-4 font-semibold text-green-700 border-b-4 border-green-600 bg-green-50 transition-all"> 🔍 Consultar Resultado </button> <button onclick="showTab('lista')" id="tab-lista" class="tab-btn px-6 py-4 font-semibold text-gray-500 border-b-4 border-transparent hover:text-green-600 hover:bg-green-50 transition-all"> 📋 Lista Completa </button> <button onclick="showTab('documentos')" id="tab-documentos" class="tab-btn px-6 py-4 font-semibold text-gray-500 border-b-4 border-transparent hover:text-green-600 hover:bg-green-50 transition-all"> 📄 Documentos para Matrícula </button>
+     <div class="flex gap-1">
+      <button onclick="showTab('consulta')" id="tab-consulta" class="tab-btn px-6 py-4 font-semibold text-green-700 border-b-4 border-green-600 bg-green-50 transition-all"> 🔍 Consultar Resultado </button> <button onclick="showTab('lista')" id="tab-lista" class="tab-btn px-6 py-4 font-semibold text-gray-500 border-b-4 border-transparent hover:text-green-600 hover:bg-green-50 transition-all"> 📋 Lista Completa </button> <button onclick="showTab('documentos')" id="tab-documentos" class="tab-btn px-6 py-4 font-semibold text-gray-500 border-b-4 border-transparent hover:text-green-600 hover:bg-green-50 transition-all"> 📄 Documentos para Matrícula </button>
      </div>
     </div>
    </nav><!-- Main Content -->
-   <main class="max-w-6xl mx-auto px-4 py-8"><!-- Tab: Consulta -->
+   <main class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Tab: Consulta -->
     <section id="section-consulta" class="tab-content">
      <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-2">Consulte seu Resultado</h2>
       <p class="text-gray-500 mb-6">Digite seu nome ou número de inscrição para verificar se foi selecionado(a)</p>
       <div class="flex flex-col md:flex-row gap-4">
-       <div class="flex-1 relative"><input type="text" id="search-input" placeholder="Digite seu nome ou número de inscrição..." class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none transition-all" onkeyup="handleSearch(event)"> <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+       <div class="flex-1 relative">
+        <input type="text" id="search-input" placeholder="Digite seu nome ou número de inscrição..." class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none transition-all" onkeyup="handleSearch(event)"> <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
          </svg></span>
        </div><button onclick="searchStudent()" class="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"> Consultar </button>
       </div>
      </div><!-- Search Result -->
-     <div id="search-result" class="hidden"><!-- Result will be inserted here -->
+     <div id="search-result" class="hidden">
+      <!-- Result will be inserted here -->
      </div>
     </section><!-- Tab: Lista Completa -->
     <section id="section-lista" class="tab-content hidden">
@@ -67,7 +74,8 @@
            <th class="px-4 py-3 text-center text-sm font-semibold text-green-800">Situação</th>
           </tr>
          </thead>
-         <tbody id="students-table"><!-- Students will be inserted here -->
+         <tbody id="students-table">
+          <!-- Students will be inserted here -->
          </tbody>
         </table>
        </div>
@@ -82,7 +90,8 @@
       </div>
       <div class="p-6 md:p-8">
        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
-        <div class="flex items-start gap-3"><span class="text-2xl">⚠️</span>
+        <div class="flex items-start gap-3">
+         <span class="text-2xl">⚠️</span>
          <div>
           <h3 class="font-semibold text-yellow-800">Atenção!</h3>
           <p class="text-yellow-700 text-sm">Todos os documentos devem ser apresentados em cópia, acompanhados dos originais para conferência.</p>
@@ -90,49 +99,57 @@
         </div>
        </div>
        <div class="grid gap-4">
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">I</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">I</span>
          <div>
           <h4 class="font-semibold text-gray-800">Certidão de Nascimento ou Casamento</h4>
           <p class="text-gray-500 text-sm">Cópia legível do documento</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">II</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">II</span>
          <div>
           <h4 class="font-semibold text-gray-800">CPF - Cadastro de Pessoa Física</h4>
           <p class="text-gray-500 text-sm">Cópia do documento</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">III</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">III</span>
          <div>
           <h4 class="font-semibold text-gray-800">RG - Registro Geral</h4>
           <p class="text-gray-500 text-sm">Cópia obrigatória para maiores de 18 anos</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">IV</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">IV</span>
          <div>
           <h4 class="font-semibold text-gray-800">Certificado de Conclusão do Ensino Médio</h4>
           <p class="text-gray-500 text-sm">Documento original + Histórico Escolar original</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">V</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">V</span>
          <div>
           <h4 class="font-semibold text-gray-800">Carteira de Vacinação</h4>
           <p class="text-gray-500 text-sm">Cópia em conformidade com a legislação vigente</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">VI</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">VI</span>
          <div>
           <h4 class="font-semibold text-gray-800">Comprovante de Residência</h4>
           <p class="text-gray-500 text-sm">Cópia ou declaração de residência, se for o caso</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100"><span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">VII</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+         <span class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">VII</span>
          <div>
           <h4 class="font-semibold text-gray-800">Cartão do SUS</h4>
           <p class="text-gray-500 text-sm">Cópia do cartão, se houver</p>
          </div>
         </div>
-        <div class="doc-item flex items-start gap-4 p-4 bg-amber-50 rounded-xl border-2 border-amber-300"><span class="flex-shrink-0 w-10 h-10 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold">VIII</span>
+        <div class="doc-item flex items-start gap-4 p-4 bg-amber-50 rounded-xl border-2 border-amber-300">
+         <span class="flex-shrink-0 w-10 h-10 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold">VIII</span>
          <div>
           <h4 class="font-semibold text-gray-800">Declaração de Vacinação Atualizada (DVA)</h4>
           <p class="text-gray-600 text-sm"><strong class="text-amber-700">Importante:</strong> Este documento deve ser requerido no Posto de Saúde mais próximo, apresentando o cartão de vacinação.</p>
@@ -695,43 +712,49 @@
       );
 
       if (found.length > 0) {
-        resultDiv.innerHTML = found.map(student => `
-          <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl shadow-xl p-8 text-white mb-4 animate-fade-in">
+        resultDiv.innerHTML = found.map(student => {
+          const isSelected = parseInt(student.classificacao.match(/\d+/)[0]) <= 152;
+          return `
+          <div class="bg-gradient-to-r ${isSelected ? 'from-green-500 to-green-600' : 'from-amber-500 to-amber-600'} rounded-2xl shadow-xl p-8 text-white mb-4 animate-fade-in">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                <span class="text-4xl">🎉</span>
+                <span class="text-4xl">${isSelected ? '🎉' : '⏳'}</span>
               </div>
               <div>
-                <h3 class="text-2xl font-bold">Parabéns!</h3>
-                <p class="text-green-100">Você foi selecionado(a)!</p>
+                <h3 class="text-2xl font-bold">${isSelected ? 'Parabéns!' : 'Você está na fila!'}</h3>
+                <p class="${isSelected ? 'text-green-100' : 'text-amber-100'}">
+                  ${isSelected ? 'Você foi selecionado(a)!' : 'Você está na lista de espera'}
+                </p>
               </div>
             </div>
-            <div class="bg-white/20 rounded-xl p-4 backdrop-blur">
-              <p class="text-sm text-green-100 mb-1">Candidato(a)</p>
+            <div class="${isSelected ? 'bg-white/20' : 'bg-white/20'} rounded-xl p-4 backdrop-blur">
+              <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'} mb-1">Candidato(a)</p>
               <p class="text-xl font-bold">${student.nome}</p>
               <div class="flex gap-6 mt-3">
                 <div>
-                  <p class="text-sm text-green-100">Classificação</p>
+                  <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'}">Classificação</p>
                   <p class="font-semibold text-lg">${student.classificacao}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-green-100">Nº SGDE</p>
+                  <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'}">Nº SGDE</p>
                   <p class="font-semibold">${student.sgde}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-green-100">Situação</p>
+                  <p class="text-sm ${isSelected ? 'text-green-100' : 'text-amber-100'}">Situação</p>
                   <p class="font-semibold flex items-center gap-2">
-                    <span class="w-3 h-3 bg-green-300 rounded-full animate-pulse"></span>
-                    ${student.situacao}
+                    <span class="w-3 h-3 ${isSelected ? 'bg-green-300' : 'bg-amber-300'} rounded-full animate-pulse"></span>
+                    ${isSelected ? 'CLASSIFICADO' : 'FILA DE ESPERA'}
                   </p>
                 </div>
               </div>
             </div>
-            <div class="mt-6 p-4 bg-white/10 rounded-xl">
-              <p class="text-sm">📄 <strong>Próximo passo:</strong> Confira a aba "Documentos para Matrícula" e compareça à secretaria da escola com toda a documentação necessária.</p>
+            <div class="mt-6 p-4 ${isSelected ? 'bg-white/10' : 'bg-white/10'} rounded-xl">
+              <p class="text-sm">
+                ${isSelected ? '📄 <strong>Próximo passo:</strong> Confira a aba "Documentos para Matrícula" e compareça à secretaria da escola com toda a documentação necessária.' : '⏳ <strong>Informação:</strong> Você está na fila de espera. Acompanhe a instituição para atualizações sobre possíveis chamadas.'}
+              </p>
             </div>
           </div>
-        `).join('');
+        `}).join('');
         resultDiv.classList.remove('hidden');
       } else {
         resultDiv.innerHTML = `
@@ -742,10 +765,10 @@
               </div>
               <div>
                 <h3 class="text-xl font-bold text-gray-700">Nenhum resultado encontrado</h3>
-                <p class="text-gray-500">Não encontramos o nome ou número de inscrição "<strong>${document.getElementById('search-input').value}</strong>" na lista de selecionados.</p>
+                <p class="text-gray-500">Não encontramos o nome ou número de inscrição "<strong>${document.getElementById('search-input').value}</strong>" na lista de candidatos.</p>
               </div>
             </div>
-            <p class="mt-4 text-sm text-gray-500">Verifique se digitou corretamente ou consulte a lista completa de selecionados.</p>
+            <p class="mt-4 text-sm text-gray-500">Verifique se digitou corretamente ou consulte a lista completa.</p>
           </div>
         `;
         resultDiv.classList.remove('hidden');
@@ -755,18 +778,24 @@
     // Populate students table
     function populateTable() {
       const tbody = document.getElementById('students-table');
-      tbody.innerHTML = students.map((student, index) => `
-        <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-green-50/50'} hover:bg-green-100 transition-colors">
+      tbody.innerHTML = students.map((student, index) => {
+        const isSelected = parseInt(student.classificacao.match(/\d+/)[0]) <= 152;
+        const situacao = isSelected ? 'CLASSIFICADO' : 'FILA DE ESPERA';
+        const bgColor = isSelected ? 'bg-green-100' : 'bg-amber-100';
+        const textColor = isSelected ? 'text-green-700' : 'text-amber-700';
+        return `
+        <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition-colors">
           <td class="px-4 py-3 text-center font-bold text-green-700">${student.classificacao}</td>
           <td class="px-4 py-3 text-gray-800">${student.nome}</td>
           <td class="px-4 py-3 text-center">
-            <span class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-              ${student.situacao}
+            <span class="inline-flex items-center gap-1 px-3 py-1 ${bgColor} ${textColor} rounded-full text-sm font-medium">
+              <span class="w-2 h-2 ${isSelected ? 'bg-green-500' : 'bg-amber-500'} rounded-full"></span>
+              ${situacao}
             </span>
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
       
       document.getElementById('total-count').textContent = students.length;
     }
@@ -774,5 +803,5 @@
     // Initialize
     populateTable();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60c94db6ea1aaa',t:'MTc3MjQ1ODU0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60e33a934f031d',t:'MTc3MjQ1OTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
