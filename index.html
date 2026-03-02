@@ -14,6 +14,33 @@
   <style>body { box-sizing: border-box; }</style>
   
  </head>
+
+	<script>
+async function atualizarContador() {
+
+  // Nome único do seu site (pode alterar se quiser)
+  const namespace = "escola-jlb-2026";
+  const key = "acessos";
+
+  const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    document.getElementById("access-counter")
+      .innerText = data.value.toLocaleString("pt-BR");
+
+  } catch (erro) {
+    document.getElementById("access-counter")
+      .innerText = "—";
+    console.error("Erro no contador:", erro);
+  }
+}
+
+atualizarContador();
+</script>
+	
  <body class="h-full bg-gradient-to-br from-green-50 to-white">
   <div id="app" class="h-full overflow-auto">
    <!-- Header -->
@@ -176,21 +203,28 @@
      </div>
     </section>
    </main><!-- Footer -->
-   <footer class="bg-green-800 text-white py-6 mt-auto">
-    <div class="max-w-6xl mx-auto px-4">
-     <div class="flex flex-col md:flex-row justify-between items-center">
+<footer class="bg-green-800 text-white py-6 mt-auto">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      
       <div class="text-center md:text-left mb-4 md:mb-0">
-       <p class="font-semibold">Escola Estadual Dr. João Leite de Barros</p>
-       <p class="text-green-200 text-sm mt-1">Curso Normal Médio - Processo Seletivo 2026</p>
-	 <p class="text-green-200 text-sm mt-1">Desenvolvido por: Wellington Oliveira - PCPI</p>
+        <p class="font-semibold">Escola Estadual Dr. João Leite de Barros</p>
+        <p class="text-green-200 text-sm mt-1">
+          Curso Normal Médio - Processo Seletivo 2026
+        </p>
+		   <p class="text-green-200 text-sm mt-1">
+          Desenvolvido por: Wellington Oliveira - PCPI
+        </p>
       </div>
+
       <div class="text-center bg-white/10 backdrop-blur px-4 py-2 rounded-lg">
-       <p class="text-green-100 text-xs">Acessos ao sistema</p>
-       <p class="text-2xl font-bold text-white" id="access-counter">0</p>
+        <p class="text-green-100 text-xs">Acessos ao sistema</p>
+        <p class="text-2xl font-bold text-white" id="access-counter">...</p>
       </div>
-     </div>
+
     </div>
-   </footer>
+  </div>
+</footer>
   </div>
   <script>
     // Lista de alunos selecionados baseada na planilha - 443 candidatos
@@ -815,5 +849,6 @@
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60e33a934f031d',t:'MTc3MjQ1OTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 </html>
+
 
 
