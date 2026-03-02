@@ -194,11 +194,9 @@
       <div class="text-center bg-white/10 backdrop-blur px-4 py-2 rounded-lg">
         <p class="text-green-100 text-xs">Acessos ao sistema</p>
 
-        <img
-          src="https://hitwebcounter.com/counter/counter.php?page=escola_jlb_normalmedio_2026&style=0038&nbdigits=6&type=page&initCount=0"
-          alt="contador de acessos"
-          class="mx-auto"
-        />
+        <p class="text-3xl font-bold tracking-widest text-white">
+          <span id="busuanzi_value_site_pv">0</span>
+        </p>
 
       </div>
 
@@ -206,27 +204,7 @@
   </div>
 </footer>
 
-<script>
-window.addEventListener("load", () => {
-
-  const img = document.getElementById("contador-img");
-  const display = document.getElementById("access-counter");
-
-  // força atualização do contador
-  img.src += "&rand=" + Math.random();
-
-  img.onload = () => {
-    // gera número visual crescente (efeito institucional)
-    let valorAtual = parseInt(display.textContent) || 0;
-    let novoValor = valorAtual + 1;
-
-    display.textContent = novoValor
-      .toString()
-      .padStart(6, "0");
-  };
-
-});
-</script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 	  
   </div>
   <script>
@@ -852,6 +830,7 @@ window.addEventListener("load", () => {
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d60e33a934f031d',t:'MTc3MjQ1OTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
 </html>
+
 
 
 
